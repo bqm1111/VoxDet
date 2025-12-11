@@ -24,6 +24,7 @@ bda_aug_conf = dict(
     flip_dx_ratio=0.5,
     flip_dy_ratio=0.5,
     flip_dz_ratio=0)
+
 data_config = dict(
     input_size=(384, 1280),
     resize=(0.0, 0.0),
@@ -31,6 +32,7 @@ data_config = dict(
     flip=False,
     crop_h=(0.0, 0.0),
     resize_test=0.0)
+
 train_pipeline = [
     dict(
         type='LoadMultiViewImageFromFiles',
@@ -68,6 +70,7 @@ train_pipeline = [
             'baseline', 'img_shape', 'gt_depths'
         ])
 ]
+
 trainset_config = dict(
     type='SemanticKITTIDataset',
     stereo_depth_root='/mnt/vita/scratch/datasets/SemanticKITTI/depth/',

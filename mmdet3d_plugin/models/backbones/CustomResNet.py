@@ -84,7 +84,7 @@ class CustomResNetGN(BaseModule):
             )
         else:
             model = timm.create_model(arch, pretrained=False)
-
+        
         self.replace_bn_with_gn(model, num_groups=32)
         self.conv1 = model.conv1
         self.norm1 = model.bn1 

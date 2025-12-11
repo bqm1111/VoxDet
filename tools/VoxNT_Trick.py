@@ -30,6 +30,13 @@ def run_length_positive(t, dim):
     return out
 
 def run_length_along_dim(t, dim, direction):
+    if direction == "positive":
+        return run_length_positive(t, dim)
+    else:
+        t_flip = torch.flip(t, dims=(dim,))
+        out_flip = run_length_positive(t_flip, dim)
+
+def run_length_along_dim(t, dim, direction):
     if direction == 'positive':
         return run_length_positive(t, dim)
     else:

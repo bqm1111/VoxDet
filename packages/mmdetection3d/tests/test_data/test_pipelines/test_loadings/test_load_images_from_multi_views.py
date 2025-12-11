@@ -13,7 +13,7 @@ def test_load_multi_view_image_from_files():
     num_views = 6
     filename = 'tests/data/waymo/kitti_format/training/image_0/0000000.png'
     filenames = [filename for _ in range(num_views)]
-
+    
     input_dict = dict(img_filename=filenames)
     results = multi_view_img_loader(input_dict)
     img = results['img']

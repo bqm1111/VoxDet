@@ -28,7 +28,7 @@ class LidarEncoder(BaseModule):
         self.split = split
         if grid_size_rv is not None:
             self.grid_size_rv = [grid_size[0], grid_size_rv, grid_size[2]]
-
+        
         # point-wise mlp
         self.point_mlp = nn.Sequential(nn.BatchNorm1d(in_channels, track_running_stats=track_running_stats),
                                        nn.Linear(in_channels, 64), nn.BatchNorm1d(64, track_running_stats=track_running_stats),
@@ -89,7 +89,7 @@ class LidarEncoder(BaseModule):
             processed_pooled_data = self.fea_compression(pooled_data)
         else:
             processed_pooled_data = pooled_data
-
+        
         # sparse conv & max pooling
         coors = unq.int()
         batch_size = coors[-1][0] + 1

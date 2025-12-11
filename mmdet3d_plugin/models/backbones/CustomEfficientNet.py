@@ -227,6 +227,7 @@ class InvertedResidual(BaseModule):
 
         return out
 
+
 def model_scaling(layer_setting, arch_setting):
     """Scaling operation to the layer's parameters according to the
     arch_setting."""
@@ -346,8 +347,8 @@ class CustomEfficientNet(BaseModule):
               [[1, 1280, 0, 1, 0, -1]]
               ]
     }  # yapf: disable
-
     # Parameters to build different kinds of architecture.
+    # 
     # From left to right: scaling factor for width, scaling factor for depth,
     # resolution.
     arch_settings = {
@@ -364,7 +365,7 @@ class CustomEfficientNet(BaseModule):
         'em': (1.0, 1.1, 240),
         'el': (1.2, 1.4, 300)
     }
-
+    # 
     def __init__(self,
                  arch='b0',
                  drop_path_rate=0.,

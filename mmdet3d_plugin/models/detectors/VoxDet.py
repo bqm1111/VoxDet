@@ -173,6 +173,7 @@ class VoxDet(BaseModule):
             x = self.occ_encoder_neck(x)
 
         return x
+    
 
     def forward_train(self, data_dict):
         img_inputs = data_dict['img_inputs']
@@ -181,7 +182,7 @@ class VoxDet(BaseModule):
 
         img_voxel_feats, depth, proposal = self.extract_img_feat(img_inputs, img_metas)
         voxel_feats_enc = self.occ_encoder(img_voxel_feats)
-
+        
         # if len(voxel_feats_enc) > 1:
         #     voxel_feats_enc = [voxel_feats_enc[0]]
         if type(voxel_feats_enc) is tuple:
@@ -194,7 +195,7 @@ class VoxDet(BaseModule):
             gt_occ_ = gt_occ.clone() 
             gt_offset = compute_all_direction_distances(gt_occ_)
 
-
+         
         if self.use_gt_refine:
             # Remove super long cars as mentioned in the Appendix
             len_x = gt_offset[:,0,:,:,:] + gt_offset[:,1,:,:,:] # X axis b x y z
@@ -331,6 +332,4 @@ class VoxDet(BaseModule):
             return self.forward_train(data_dict)
         else:
             return self.forward_test(data_dict)
-        
-
 

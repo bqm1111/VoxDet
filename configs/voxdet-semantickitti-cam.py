@@ -1,6 +1,6 @@
-data_root = '/mnt/vita/scratch/datasets/SemanticKITTI/dataset/'
-ann_file = '/mnt/vita/scratch/datasets/SemanticKITTI/dataset/labels/'
-stereo_depth_root = '/mnt/vita/scratch/datasets/SemanticKITTI/depth/'
+data_root = 'data/dataset/'
+ann_file = 'data/dataset/labels/'
+stereo_depth_root = 'data/dataset/depth/'
 camera_used = ['left']
 
 dataset_type = 'SemanticKITTIDataset'
@@ -13,7 +13,7 @@ semantic_kitti_class_frequencies = [
         4.50296100e06, 4.48836500e07, 2.26992300e06, 5.68402180e07, 1.57196520e07,
         1.58442623e08, 2.06162300e06, 3.69705220e07, 1.15198800e06, 3.34146000e05,
     ]
-
+# 
 # 20 classes with unlabeled
 class_names = [
     'unlabeled', 'car', 'bicycle', 'motorcycle', 'truck', 'other-vehicle',
@@ -97,7 +97,7 @@ data = dict(
 )
 
 train_dataloader_config = dict(
-    batch_size=2,
+    batch_size=1,
     num_workers=4)
 
 test_dataloader_config = dict(
@@ -325,4 +325,4 @@ lr_scheduler = dict(
 )
 optimizer_config = dict(grad_clip=dict(max_norm=20, norm_type=2))
 # sync_bn = True # Turn on sync BN if you uise more than 2 GPUs, which may (not must) improve the performance.
-load_from='/mnt/vita/scratch/vita-students/users/wuli/code/VoxDet_dev/ckpt/preatrain_depth_model.ckpt'
+load_from='ckpts/preatrain_depth_model.ckpt'

@@ -1,0 +1,273 @@
+# TartanAir Semantic Labels Configuration
+# Format follows SemanticKITTI for compatibility with occupancy prediction pipelines
+
+nbr_classes: 33
+grid_dims: [256, 256, 32]  # (W, H, D) - in camera frame: X-right, Y-down, Z-forward
+
+# Original TartanAir labels (ID: "name")
+labels:
+  0  : "unlabeled"
+  6  : "cabinet"
+  7  : "pipecover"
+  8  : "metalpanel"
+  9  : "metalhandrail"
+  23 : "light"
+  27 : "cieling"
+  28 : "metalplatform"
+  36 : "chair"
+  59 : "cementcolumn"
+  60 : "plug"
+  64 : "ceiling"
+  65 : "metalpole"
+  69 : "ventpipe"
+  70 : "metalramp"
+  72 : "car"
+  116: "metalfloor"
+  123: "toolbox"
+  132: "ventpipeclamp"
+  143: "metalstair"
+  146: "lamp"
+  157: "tireassembly"
+  160: "metalcieling"
+  161: "platform"
+  171: "monitor"
+  175: "wall"
+  180: "door"
+  188: "sky"
+  191: "cable"
+  195: "chasis"
+  199: "floor"
+  205: "table"
+  208: "robotarm"
+  239: "keyboard"
+
+# Color map for visualization (BGR format)
+color_map:
+  0  : [0, 0, 0]        # unlabeled - black
+  6  : [139, 90, 43]    # cabinet - brown
+  7  : [128, 128, 128]  # pipecover - gray
+  8  : [192, 192, 192]  # metalpanel - silver
+  9  : [169, 169, 169]  # metalhandrail - dark gray
+  23 : [0, 255, 255]    # light - yellow
+  27 : [205, 133, 63]   # cieling - peru
+  28 : [105, 105, 105]  # metalplatform - dim gray
+  36 : [0, 165, 255]    # chair - orange
+  59 : [128, 128, 0]    # cementcolumn - olive
+  60 : [255, 0, 255]    # plug - magenta
+  64 : [205, 133, 63]   # ceiling - peru
+  65 : [150, 240, 255]  # metalpole - light cyan
+  69 : [0, 128, 128]    # ventpipe - teal
+  70 : [112, 128, 144]  # metalramp - slate gray
+  72 : [245, 150, 100]  # car - light blue
+  116: [119, 136, 153]  # metalfloor - light slate gray
+  123: [50, 205, 50]    # toolbox - lime green
+  132: [0, 100, 100]    # ventpipeclamp - dark teal
+  143: [47, 79, 79]     # metalstair - dark slate gray
+  146: [0, 200, 200]    # lamp - gold
+  157: [30, 105, 210]   # tireassembly - chocolate
+  160: [144, 128, 112]  # metalcieling - gray
+  161: [128, 128, 128]  # platform - gray
+  171: [128, 0, 0]      # monitor - maroon
+  175: [0, 200, 255]    # wall - gold
+  180: [42, 42, 165]    # door - brown
+  188: [235, 206, 135]  # sky - sky blue
+  191: [0, 0, 139]      # cable - dark red
+  195: [180, 130, 70]   # chasis - steel blue
+  199: [255, 0, 255]    # floor - magenta
+  205: [19, 69, 139]    # table - saddle brown
+  208: [255, 191, 0]    # robotarm - deep sky blue
+  239: [60, 20, 220]    # keyboard - crimson
+
+# Estimated content ratios (placeholder - should be computed from actual data)
+content:
+  0  : 0.30    # unlabeled
+  6  : 0.005   # cabinet
+  7  : 0.008   # pipecover
+  8  : 0.015   # metalpanel
+  9  : 0.008   # metalhandrail
+  23 : 0.010   # light
+  27 : 0.005   # cieling
+  28 : 0.012   # metalplatform
+  36 : 0.003   # chair
+  59 : 0.010   # cementcolumn
+  60 : 0.002   # plug
+  64 : 0.080   # ceiling
+  65 : 0.015   # metalpole
+  69 : 0.010   # ventpipe
+  70 : 0.008   # metalramp
+  72 : 0.005   # car
+  116: 0.050   # metalfloor
+  123: 0.003   # toolbox
+  132: 0.005   # ventpipeclamp
+  143: 0.010   # metalstair
+  146: 0.008   # lamp
+  157: 0.002   # tireassembly
+  160: 0.020   # metalcieling
+  161: 0.015   # platform
+  171: 0.003   # monitor
+  175: 0.120   # wall
+  180: 0.010   # door
+  188: 0.050   # sky
+  191: 0.008   # cable
+  195: 0.002   # chasis
+  199: 0.100   # floor
+  205: 0.005   # table
+  208: 0.003   # robotarm
+  239: 0.001   # keyboard
+
+# Learning map: maps original labels to training class IDs (0-19)
+# Classes are grouped by semantic similarity
+learning_map:
+  0  : 0      # "unlabeled" -> unlabeled
+  6  : 11     # "cabinet" -> furniture
+  7  : 14     # "pipecover" -> pipe
+  8  : 9      # "metalpanel" -> metal-structure
+  9  : 9      # "metalhandrail" -> metal-structure
+  23 : 13     # "light" -> lighting
+  27 : 7      # "cieling" -> ceiling
+  28 : 5      # "metalplatform" -> platform
+  36 : 11     # "chair" -> furniture
+  59 : 8      # "cementcolumn" -> column
+  60 : 0      # "plug" -> unlabeled (too small/rare)
+  64 : 7      # "ceiling" -> ceiling
+  65 : 17     # "metalpole" -> pole
+  69 : 14     # "ventpipe" -> pipe
+  70 : 5      # "metalramp" -> platform
+  72 : 1      # "car" -> car
+  116: 4      # "metalfloor" -> metalfloor
+  123: 12     # "toolbox" -> equipment
+  132: 14     # "ventpipeclamp" -> pipe
+  143: 16     # "metalstair" -> stair
+  146: 13     # "lamp" -> lighting
+  157: 2      # "tireassembly" -> vehicle-parts
+  160: 7      # "metalcieling" -> ceiling
+  161: 5      # "platform" -> platform
+  171: 10     # "monitor" -> electronics
+  175: 6      # "wall" -> wall
+  180: 15     # "door" -> door
+  188: 18     # "sky" -> sky
+  191: 14     # "cable" -> pipe
+  195: 2      # "chasis" -> vehicle-parts
+  199: 3      # "floor" -> floor
+  205: 11     # "table" -> furniture
+  208: 12     # "robotarm" -> equipment
+  239: 10     # "keyboard" -> electronics
+
+# Inverse learning map: maps training class IDs back to representative original labels
+learning_map_inv:
+  0 : 0       # "unlabeled"
+  1 : 72      # "car"
+  2 : 195     # "vehicle-parts" (chasis)
+  3 : 199     # "floor"
+  4 : 116     # "metalfloor"
+  5 : 161     # "platform"
+  6 : 175     # "wall"
+  7 : 64      # "ceiling"
+  8 : 59      # "column"
+  9 : 8       # "metal-structure"
+  10: 171     # "electronics"
+  11: 205     # "furniture"
+  12: 208     # "equipment"
+  13: 146     # "lighting"
+  14: 69      # "pipe"
+  15: 180     # "door"
+  16: 143     # "stair"
+  17: 65      # "pole"
+  18: 188     # "sky"
+  19: 0       # reserved
+
+# Class names for training classes
+learning_labels:
+  0 : "unlabeled"
+  1 : "car"
+  2 : "vehicle-parts"
+  3 : "floor"
+  4 : "metalfloor"
+  5 : "platform"
+  6 : "wall"
+  7 : "ceiling"
+  8 : "column"
+  9 : "metal-structure"
+  10: "electronics"
+  11: "furniture"
+  12: "equipment"
+  13: "lighting"
+  14: "pipe"
+  15: "door"
+  16: "stair"
+  17: "pole"
+  18: "sky"
+  19: "reserved"
+
+# Color map for training classes (BGR format)
+learning_color_map:
+  0 : [0, 0, 0]         # unlabeled - black
+  1 : [245, 150, 100]   # car - light blue
+  2 : [180, 130, 70]    # vehicle-parts - steel blue
+  3 : [255, 0, 255]     # floor - magenta
+  4 : [119, 136, 153]   # metalfloor - light slate gray
+  5 : [128, 128, 128]   # platform - gray
+  6 : [0, 200, 255]     # wall - gold
+  7 : [205, 133, 63]    # ceiling - peru
+  8 : [128, 128, 0]     # column - olive
+  9 : [192, 192, 192]   # metal-structure - silver
+  10: [128, 0, 0]       # electronics - maroon
+  11: [19, 69, 139]     # furniture - saddle brown
+  12: [255, 191, 0]     # equipment - deep sky blue
+  13: [0, 255, 255]     # lighting - yellow
+  14: [0, 128, 128]     # pipe - teal
+  15: [42, 42, 165]     # door - brown
+  16: [47, 79, 79]      # stair - dark slate gray
+  17: [150, 240, 255]   # pole - light cyan
+  18: [235, 206, 135]   # sky - sky blue
+  19: [100, 100, 100]   # reserved - gray
+
+# Which classes to ignore during training/evaluation
+learning_ignore:
+  0 : True    # "unlabeled" - ignore
+  1 : False   # "car"
+  2 : False   # "vehicle-parts"
+  3 : False   # "floor"
+  4 : False   # "metalfloor"
+  5 : False   # "platform"
+  6 : False   # "wall"
+  7 : False   # "ceiling"
+  8 : False   # "column"
+  9 : False   # "metal-structure"
+  10: False   # "electronics"
+  11: False   # "furniture"
+  12: False   # "equipment"
+  13: False   # "lighting"
+  14: False   # "pipe"
+  15: False   # "door"
+  16: False   # "stair"
+  17: False   # "pole"
+  18: False   # "sky"
+  19: True    # "reserved" - ignore
+
+# Dataset splits (by environment or trajectory)
+# Placeholder - should be customized based on actual TartanAir environments
+split:
+  train:
+    - "AbandonedCable"
+    - "AbandonedFactory"
+    - "AbandonedFactory2"
+    - "AbandonedSchool"
+    - "AmericanDiner"
+    - "AmusementPark"
+    - "AncientTowns"
+    - "Antiquity3D"
+    - "Apocalyptic"
+    - "ArchVizTinyHouseDay"
+  valid:
+    - "ArchVizTinyHouseNight"
+    - "BrushifyMoon"
+  test:
+    - "CarWelding"
+    - "CastleFortress"
+    - "CoalMine"
+    - "ConstructionSite"
+    - "CountryHouse"
+    - "CyberPunk"
+    - "Cyberpunk"
+    - "DesertGasStation"

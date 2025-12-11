@@ -24,7 +24,7 @@ class LoadAnnotationOcc():
         flip_dz = np.random.uniform() < self.bda_aug_conf['flip_dz_ratio']
         
         return rotate_bda, scale_bda, flip_dx, flip_dy, flip_dz
-    
+
     def forward_test(self, results):
         bda_rot = torch.eye(4).float()
         imgs, rots, trans, intrins, post_rots, post_trans, sensor2sensors = results['img_inputs']
@@ -99,10 +99,10 @@ def voxel_transform(voxel_labels, rotate_angle, scale_ratio, flip_dx, flip_dy, f
             [0, 1, 0, 0], 
             [0, 0, -1, 0],
             [0, 0, 0, 1]])
-    
+
     # denorm @ flip_x @ flip_y @ flip_z @ rotation @ normalize
     bda_mat = trans_denorm @ flip_mat @ rot_mat @ trans_norm
-    
+
     voxel_labels = voxel_labels.numpy().astype(np.uint8)
     
     if not np.isclose(rotate_degree, 0):
@@ -129,6 +129,7 @@ def custom_rotate_3d(voxel_labels, rotate_degree):
         voxel_labels = voxel_labels.numpy().astype(np.uint8)
     
     voxel_labels_list = []
+
     for height_index in range(voxel_labels.shape[-1]):
         bev_labels = voxel_labels[..., height_index]
         bev_labels = Image.fromarray(bev_labels.astype(np.uint8))
@@ -139,5 +140,6 @@ def custom_rotate_3d(voxel_labels, rotate_degree):
     
     if is_tensor:
         voxel_labels = torch.from_numpy(voxel_labels).long()
-    
+
     return voxel_labels
+

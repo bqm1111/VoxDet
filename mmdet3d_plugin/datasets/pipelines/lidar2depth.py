@@ -110,7 +110,7 @@ class CreateDepthFromLiDAR(object):
 
         points_d = points[..., 2:3] # N, b, 1
         points_uv = points[..., :2] / points_d # N, b, 2
-
+        
         # from raw pixel to transformed pixel
         points_uv = post_rots[:, :2, :2].unsqueeze(0) @ points_uv.unsqueeze(-1)
         points_uv = points_uv.squeeze(-1) + post_trans[..., :2].unsqueeze(0)

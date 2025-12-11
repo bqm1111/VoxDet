@@ -75,7 +75,7 @@ class BaseTrackerPredictor(nn.Module):
         self.ffeat_updater = nn.Sequential(nn.Linear(self.latent_dim, self.latent_dim), nn.GELU())
 
         self.vis_predictor = nn.Sequential(nn.Linear(self.latent_dim, 1))
-
+        
         if predict_conf:
             self.conf_predictor = nn.Sequential(nn.Linear(self.latent_dim, 1))
 
@@ -109,7 +109,6 @@ class BaseTrackerPredictor(nn.Module):
 
         # Sample/extract the features of the query points in the query frame
         query_track_feat = sample_features4d(fmaps[:, 0], coords[:, 0])
-
         # init track feats by query feats
         track_feats = query_track_feat.unsqueeze(1).repeat(1, S, 1, 1)  # B, S, N, C
         # back up the init coords

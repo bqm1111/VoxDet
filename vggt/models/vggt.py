@@ -92,5 +92,5 @@ class VGGT(nn.Module, PyTorchModelHubMixin):
             predictions["conf"] = conf
 
         predictions["images"] = images
-
+        
         return predictions

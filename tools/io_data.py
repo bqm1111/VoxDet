@@ -211,8 +211,7 @@ def data_augmentation_3Dflips(flip, data):
     data = np.flip(np.flip(data, axis=0), axis=2).copy()
 
   return data
-
-
+      
 def get_cmap_semanticKITTI20():
   colors = np.array([
     # [0  , 0  , 0, 255],

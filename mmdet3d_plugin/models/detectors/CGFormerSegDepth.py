@@ -51,7 +51,7 @@ class CGFormerSegDepth(BaseModule):
             context = context.view(b * n, d, h, w)
         
         return context, depth
-    
+
     def forward_train(self, data_dict):
         img_inputs = data_dict['img_inputs']
         img_metas = data_dict['img_metas']
@@ -77,7 +77,7 @@ class CGFormerSegDepth(BaseModule):
         }
 
         return train_output
-    
+
     def forward_test(self, data_dict):
         img_inputs = data_dict['img_inputs']
         img_metas = data_dict['img_metas']
@@ -91,7 +91,7 @@ class CGFormerSegDepth(BaseModule):
             'depth': depth
         }
         return test_output
-    
+
     def forward(self, data_dict):
         if self.training:
             return self.forward_train(data_dict)
@@ -102,3 +102,4 @@ class CGFormerSegDepth(BaseModule):
     def with_img_neck(self):
         """bool: Whether the detector has a neck in image branch."""
         return hasattr(self, 'img_neck') and self.img_neck is not None
+

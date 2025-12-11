@@ -83,8 +83,8 @@ class CreateDepthAndSemanticFromLiDAR(object):
                     (projected_points[..., 0] <= img_w - 1) & \
                     (projected_points[..., 1] <= img_h - 1) & \
                     (projected_points[..., 2] > 0)
-        
         gt_depths = []
+
         gt_semantics = []
         for img_index in range(imgs.shape[0]):
             gt_depth = torch.zeros((img_h, img_w))
@@ -104,7 +104,6 @@ class CreateDepthAndSemanticFromLiDAR(object):
             gt_depths.append(gt_depth)
             gt_semantics.append(gt_semantic)
 
-                
         gt_depths = torch.stack(gt_depths)
         gt_semantics = torch.stack(gt_semantics)
         imgs, rots, trans, intrins, post_rots, post_trans, _, sensor2sensors, focal_length, baseline = results['img_inputs']

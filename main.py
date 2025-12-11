@@ -59,7 +59,7 @@ if __name__ == '__main__':
     pl.seed_everything(seed)
     num_gpu = torch.cuda.device_count()
     model = pl_model(config)
-    
+
     data_dm = DataModule(config)
 
     checkpoint_callback = ModelCheckpoint(
@@ -67,7 +67,7 @@ if __name__ == '__main__':
         mode='max',
         save_last=True,
         filename='best')
-    
+
     if not config.eval:
         trainer = pl.Trainer(
             devices=[i for i in range(num_gpu)],
@@ -100,5 +100,4 @@ if __name__ == '__main__':
         )
         trainer.test(model=model, datamodule=data_dm, ckpt_path=config['ckpt_path'])
 
-    
 

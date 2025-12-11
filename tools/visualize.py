@@ -253,10 +253,10 @@ def get_fov_mask(transform, intr):
     return fov_mask
 
 sequence = '08'
-data_root = 'data/semantickitti/sequences'
-pred_root = 'CGFormer/sequences/08/predictions'
+data_root = 'data/dataset/sequences'
+pred_root = 'pred/sequences'
 write_root = 'data/codebase/visualize'
-gt_root = 'data/semantickitti/labels'
+gt_root = 'data/dataset/labels'
 calib_file = os.path.join(data_root, sequence, 'calib.txt')
 calib_all = {}
 with open(calib_file, "r") as f:
@@ -270,6 +270,7 @@ intrin = np.identity(4)
 intrin[:3, :4] = calib_all["P2"].reshape(3, 4)
 lidar2cam = np.identity(4)  # 4x4 matrix
 lidar2cam[:3, :4] = calib_all["Tr"].reshape(3, 4)
+lidar2cam[:3, :4] = calib_all["Tr"].reshape(3, 4)
 
 pred_voxels = os.listdir(os.path.join(pred_root, sequence, 'predictions'))
 pred_voxels.sort()
@@ -277,7 +278,6 @@ save_name = 'CGFormer'
 vox_origin = np.array([0, -25.6, -2])
 fov_mask = get_fov_mask(lidar2cam, intrin)
 
-print(len(pred_voxels))
 for pred_voxel in pred_voxels:
     save_root = pred_voxel.split('.')[0]
     save_root = os.path.join(write_root, save_root)

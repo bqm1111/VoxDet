@@ -64,7 +64,6 @@ class OccHeadCLIP(nn.Module):
             )
             self.occ_convs.append(occ_conv)
         txt_features = torch.from_numpy(np.load("text_features.npy")) 
-        
         txt_features = txt_features / txt_features.norm(dim=-1, keepdim=True)
         # to buffer
         self.register_buffer('txt_feats', txt_features)
@@ -101,7 +100,7 @@ class OccHeadCLIP(nn.Module):
         loss_dict['loss_voxel_geo_scal'] = self.loss_voxel_geo_scal_weight * geo_scal_loss(output_voxels, target_voxels, ignore_index=255, non_empty_idx=self.empty_idx)
 
         return loss_dict
-    
+
 @HEADS.register_module()
 class OccHead(nn.Module):
     def __init__(

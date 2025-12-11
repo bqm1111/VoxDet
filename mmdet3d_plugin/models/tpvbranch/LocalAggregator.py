@@ -25,8 +25,6 @@ class LocalAggregator(BaseModule):
             output = output[0]
 
         return output
-    
-
 
 @BACKBONES.register_module()
 class VoxelAggregatorDual(BaseModule):
