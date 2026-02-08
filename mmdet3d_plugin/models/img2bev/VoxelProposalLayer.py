@@ -56,7 +56,7 @@ class VoxelProposalLayer(BaseModule):
             shift = intrins[:, :, :3, 3]
             points = points - shift.view(b, 1, 3, 1)
             intrins = intrins[:, :, :3, :3]
-        
+
         combine = rots.matmul(torch.inverse(intrins))
         points = combine.view(b, 1, 3, 3).matmul(points).squeeze(-1)
         points += trans.view(b, 1, 3)
@@ -70,6 +70,7 @@ class VoxelProposalLayer(BaseModule):
         
         return points
     
+
     def lidar2voxel(self, points, device):
         points_reshape = []
         batch_idx = []
@@ -84,7 +85,7 @@ class VoxelProposalLayer(BaseModule):
         unq, unq_inv = self.voxelize(points_reshape, batch_idx)
 
         return unq, unq_inv
-    
+    # 
     def forward(self, cam_params, img_metas):
         depth = img_metas['stereo_depth']
         points = self.depth2lidar(self.image_grid, depth, cam_params)

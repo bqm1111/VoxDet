@@ -13,7 +13,7 @@ class LoadAnnotationOcc():
         self.transform_center = (self.point_cloud_range[:3] + self.point_cloud_range[3:]) / 2
 
         self.apply_bda = apply_bda
-    
+
     def sample_bda_augmentation(self):
         """Generate bda augmentation values based on bda_config."""
 
@@ -22,16 +22,16 @@ class LoadAnnotationOcc():
         flip_dx = np.random.uniform() < self.bda_aug_conf['flip_dx_ratio']
         flip_dy = np.random.uniform() < self.bda_aug_conf['flip_dy_ratio']
         flip_dz = np.random.uniform() < self.bda_aug_conf['flip_dz_ratio']
-        
-        return rotate_bda, scale_bda, flip_dx, flip_dy, flip_dz
 
+        return rotate_bda, scale_bda, flip_dx, flip_dy, flip_dz
+    
     def forward_test(self, results):
         bda_rot = torch.eye(4).float()
         imgs, rots, trans, intrins, post_rots, post_trans, sensor2sensors = results['img_inputs']
 
         results['img_inputs'] = (imgs, rots, trans, intrins, post_rots, post_trans, bda_rot, sensor2sensors)
         return results
-    
+
     def __call__(self, results):
         if results['gt_occ'] is None:
             return self.forward_test(results)
@@ -50,13 +50,14 @@ class LoadAnnotationOcc():
                 bda_rot = torch.eye(4).float()
         else:
             bda_rot = torch.eye(4).float()
-        
+
         imgs, rots, trans, intrins, post_rots, post_trans, sensor2sensors = results['img_inputs']
         results['img_inputs'] = (imgs, rots, trans, intrins, post_rots, post_trans, bda_rot, sensor2sensors)
         results['img_shape'] = imgs.shape[-2:]
         results['gt_occ'] = gt_occ.long()
         
         return results
+
 
 def voxel_transform(voxel_labels, rotate_angle, scale_ratio, flip_dx, flip_dy, flip_dz, transform_center=None):
     # for semantic_kitti, the transform origin is not zero, but the center of the point cloud range

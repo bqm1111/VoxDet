@@ -1,61 +1,108 @@
-data_root = "data/kitti/dataset/"
-ann_file = "data/kitti/dataset/labels/"
-stereo_depth_root = "data/kitti/dataset/depth/"
-camera_used = ["left"]
+# TartanAir Dataset Configuration for Occupancy Prediction
+# Matches the format of voxdet-semantickitti-cam.py
 
-dataset_type = "SemanticKITTIDataset"
-point_cloud_range = [0, -25.6, -2, 51.2, 25.6, 4.4]
-occ_size = [256, 256, 32]
+data_root = "data/tartanair"  # Update with your TartanAir path
+ann_file = "data/tartanair"  # Same as data_root if voxel labels are co-located
+depth_root = "data/tartanair"  # Same as data_root
 
-semantic_kitti_class_frequencies = [
-    5.41773033e09,
-    1.57835390e07,
-    1.25136000e05,
-    1.18809000e05,
-    6.46799000e05,
-    8.21951000e05,
-    2.62978000e05,
-    2.83696000e05,
-    2.04750000e05,
-    6.16887030e07,
-    4.50296100e06,
-    4.48836500e07,
-    2.26992300e06,
-    5.68402180e07,
-    1.57196520e07,
-    1.58442623e08,
-    2.06162300e06,
-    3.69705220e07,
-    1.15198800e06,
-    3.34146000e05,
+camera_used = ["front"]  # or 'lcam_front'
+
+dataset_type = "TartanAirDataset"
+
+# Point cloud range and voxel size
+# TartanAir uses camera frame: X-right, Y-down, Z-forward
+# Adjust based on your generate_voxels_robust.py settings
+# point_cloud_range = [
+#     -25.6,
+#     -25.6,
+#     0.0,
+#     25.6,
+#     6.4,
+#     51.2,
+# ]  # [x_min, y_min, z_min, x_max, y_max, z_max]
+# occ_size = [256, 160, 256]  # [X, Y, Z] voxel grid dimensions
+point_cloud_range = [0, -25.6, -2, 51.2, 25.6, 4.4]  # SemanticKITTI standard
+occ_size = [256, 256, 32]  # [X, Y, Z] - SemanticKITTI standard
+
+# TartanAir class frequencies (placeholder - compute from your dataset)
+# These are from the LEARNING_MAP in generate_voxels_robust.py (34 classes)
+tartanair_class_frequencies = [
+    5.00e9,  # 0: unlabeled/empty
+    1.00e7,  # 1: cabinet
+    1.00e6,  # 2: cable
+    1.00e6,  # 3: car
+    1.00e6,  # 4: ceiling
+    1.00e6,  # 5: cementcolumn
+    1.00e6,  # 6: chair
+    1.00e6,  # 7: chasis
+    1.00e6,  # 8: cieling
+    1.00e7,  # 9: door
+    1.00e8,  # 10: floor
+    1.00e5,  # 11: keyboard
+    1.00e6,  # 12: lamp
+    1.00e7,  # 13: light
+    1.00e7,  # 14: metalcieling
+    1.00e7,  # 15: metalfloor
+    1.00e6,  # 16: metalhandrail
+    1.00e7,  # 17: metalpanel
+    1.00e7,  # 18: metalplatform
+    1.00e6,  # 19: metalpole
+    1.00e6,  # 20: metalramp
+    1.00e6,  # 21: metalstair
+    1.00e5,  # 22: monitor
+    1.00e6,  # 23: pipecover
+    1.00e6,  # 24: platform
+    1.00e5,  # 25: plug
+    1.00e6,  # 26: robotarm
+    1.00e8,  # 27: sky
+    1.00e6,  # 28: table
+    1.00e6,  # 29: tireassembly
+    1.00e6,  # 30: toolbox
+    1.00e6,  # 31: ventpipe
+    1.00e5,  # 32: ventpipeclamp
+    1.00e8,  # 33: wall
 ]
 
-# 20 classes with unlabeled
+# 34 classes for TartanAir (from LEARNING_MAP)
 class_names = [
-    "unlabeled",
-    "car",
-    "bicycle",
-    "motorcycle",
-    "truck",
-    "other-vehicle",
-    "person",
-    "bicyclist",
-    "motorcyclist",
-    "road",
-    "parking",
-    "sidewalk",
-    "other-ground",
-    "building",
-    "fence",
-    "vegetation",
-    "trunk",
-    "terrain",
-    "pole",
-    "traffic-sign",
+    "unlabeled",  # 0
+    "cabinet",  # 1
+    "pipecover",  # 2
+    "metalpanel",  # 3
+    "metalhandrail",  # 4
+    "light",  # 5
+    "cieling",  # 6
+    "metalplatform",  # 7
+    "chair",  # 8
+    "cementcolumn",  # 9
+    "plug",  # 10
+    "ceiling",  # 11
+    "metalpole",  # 12
+    "ventpipe",  # 13
+    "metalramp",  # 14
+    "car",  # 15
+    "metalfloor",  # 16
+    "toolbox",  # 17
+    "ventpipeclamp",  # 18
+    "metalstair",  # 19
+    "lamp",  # 20
+    "tireassembly",  # 21
+    "metalcieling",  # 22
+    "platform",  # 23
+    "monitor",  # 24
+    "wall",  # 25
+    "door",  # 26
+    "sky",  # 27
+    "cable",  # 28
+    "chasis",  # 29
+    "floor",  # 30
+    "table",  # 31
+    "robotarm",  # 32
+    "keyboard",  # 33
 ]
 num_class = len(class_names)
 
-# dataset config #
+# BDA (Bird's-eye-view Data Augmentation) config
 bda_aug_conf = dict(
     rot_lim=(-22.5, 22.5),
     scale_lim=(0.95, 1.05),
@@ -64,35 +111,46 @@ bda_aug_conf = dict(
     flip_dz_ratio=0,
 )
 
+# Data config for image preprocessing
+# TartanAir images are 640x640, adjust input_size as needed
 data_config = {
-    "input_size": (384, 1280),
-    # 'resize': (-0.06, 0.11),
-    # 'rot': (-5.4, 5.4),
-    # 'flip': True,
-    "resize": (0.0, 0.0),
-    "rot": (0.0, 0.0),
-    "flip": (0.0, 0.0),
-    "flip": False,
-    "crop_h": (0.0, 0.0),
+    "input_size": (320, 448),  # (H, W) - adjust based on your model requirements
+    "resize": (0.0, 0.0),  # No random resize for now
+    "rot": (0.0, 0.0),  # No random rotation
+    "flip": False,  # No random flip
+    "crop_h": (0.0, 0.0),  # No random crop
     "resize_test": 0.00,
 }
 
+# Sequences configuration
+# Define your train/val/test split here
+# Format: list of (env_name, difficulty, trajectory_id) tuples
+train_sequences = [
+    ("CarWelding", "Data_easy", "P000"),
+    # ("CarWelding", "Data_easy", "P001"),
+    # ("CarWelding", "Data_easy", "P002"),
+    # Add more sequences...
+]
+
+val_sequences = [
+    ("CarWelding", "Data_easy", "P008"),
+    # Add more sequences...
+]
+
+test_sequences = val_sequences  # Same as val for now
+
+# Training pipeline
 train_pipeline = [
     dict(
-        type="LoadMultiViewImageFromFiles",
+        type="LoadMultiViewImageFromFiles_TartanAir",
         data_config=data_config,
-        load_stereo_depth=True,
+        load_depth=True,
         is_train=True,
         color_jitter=(0.4, 0.4, 0.4),
     ),
+    dict(type="CreateDepthFromTartanAir", data_root=data_root),
     dict(
-        type="CreateDepthFromLiDAR",
-        data_root=data_root,
-        dataset="kitti",
-        load_seg=False,
-    ),
-    dict(
-        type="LoadAnnotationOcc",
+        type="LoadTartanAirAnnotation",
         bda_aug_conf=bda_aug_conf,
         apply_bda=False,
         is_train=True,
@@ -114,30 +172,33 @@ train_pipeline = [
     ),
 ]
 
+# Training dataset config
 trainset_config = dict(
     type=dataset_type,
-    stereo_depth_root=stereo_depth_root,
     data_root=data_root,
     ann_file=ann_file,
+    depth_root=depth_root,
     pipeline=train_pipeline,
     split="train",
     camera_used=camera_used,
     occ_size=occ_size,
     pc_range=point_cloud_range,
     test_mode=False,
+    sequences=train_sequences,
 )
 
+# Test pipeline
 test_pipeline = [
     dict(
-        type="LoadMultiViewImageFromFiles",
+        type="LoadMultiViewImageFromFiles_TartanAir",
         data_config=data_config,
-        load_stereo_depth=True,
+        load_depth=True,
         is_train=False,
         color_jitter=None,
     ),
-    dict(type="CreateDepthFromLiDAR", data_root=data_root, dataset="kitti"),
+    dict(type="CreateDepthFromTartanAir", data_root=data_root),
     dict(
-        type="LoadAnnotationOcc",
+        type="LoadTartanAirAnnotation",
         bda_aug_conf=bda_aug_conf,
         apply_bda=False,
         is_train=False,
@@ -161,25 +222,30 @@ test_pipeline = [
     ),
 ]
 
+# Test dataset config
 testset_config = dict(
     type=dataset_type,
-    stereo_depth_root=stereo_depth_root,
     data_root=data_root,
     ann_file=ann_file,
+    depth_root=depth_root,
     pipeline=test_pipeline,
     split="test",
     camera_used=camera_used,
     occ_size=occ_size,
     pc_range=point_cloud_range,
+    test_mode=True,
+    sequences=test_sequences,
 )
 
+# Data config
 data = dict(train=trainset_config, val=testset_config, test=testset_config)
 
+# Dataloader config
 train_dataloader_config = dict(batch_size=1, num_workers=4)
 
 test_dataloader_config = dict(batch_size=1, num_workers=4)
 
-# model
+# Model config
 numC_Trans = 128
 lss_downsample = [2, 2, 2]
 voxel_out_channels = [128]
@@ -193,18 +259,17 @@ grid_config = {
     "xbound": [point_cloud_range[0], point_cloud_range[3], voxel_x * lss_downsample[0]],
     "ybound": [point_cloud_range[1], point_cloud_range[4], voxel_y * lss_downsample[1]],
     "zbound": [point_cloud_range[2], point_cloud_range[5], voxel_z * lss_downsample[2]],
-    "dbound": [2.0, 58.0, 0.5],
+    "dbound": [0.5, 56.5, 0.5],  # Adjusted for TartanAir depth range
 }
 
 _num_layers_cross_ = 3
 _num_points_cross_ = 8
 _num_levels_ = 1
-_num_cams_ = 1
+_num_cams_ = 1  # TartanAir single camera
 _dim_ = 128
 
 model = dict(
     type="VoxDet",
-    # The (a) part in Fig.3 of the main paper
     car_scale_filter_max=[30, 30, 30],
     use_gt_refine=True,
     img_backbone=dict(
@@ -239,12 +304,11 @@ model = dict(
     ),
     proposal_layer=dict(
         type="VoxelProposalLayer",
-        point_cloud_range=[0, -25.6, -2, 51.2, 25.6, 4.4],
+        point_cloud_range=point_cloud_range,
         input_dimensions=[128, 128, 16],
         data_config=data_config,
         init_cfg=None,
     ),
-
     VoxFormer_head=dict(
         type="VoxFormerHeadCrossAttention",
         volume_h=128,
@@ -298,7 +362,6 @@ model = dict(
         ),
         mlp_prior=True,
     ),
-    # The (b) part in Fig.3 of the main paper
     occ_encoder_backbone=dict(
         type="Ident",
         embed_dims=128,
@@ -315,9 +378,7 @@ model = dict(
             ),
             local_encoder_neck=dict(
                 type="SpatiallyDecoupledFPN",
-                # tpv_down_ratio=2.0,
                 share_fpn=False,
-                # num_groups=4,
                 in_channels=[128, 128, 128],
                 out_channels=_dim_,
                 start_level=0,
@@ -344,10 +405,10 @@ model = dict(
         },
         conv_cfg=dict(type="Conv3d", bias=False),
         norm_cfg=dict(type="GN", num_groups=32, requires_grad=True),
-        class_frequencies=semantic_kitti_class_frequencies,
-        num_classes=17
+        balance_cls_weight=False,
+        class_frequencies=tartanair_class_frequencies,
+        num_classes=34,
     ),
-    # The (c) part in Fig.3 of the main paper
     pts_bbox_head=dict(
         type="VoxDetHead",
         down_sampling_ratio=0.5,
@@ -372,11 +433,13 @@ model = dict(
         },
         conv_cfg=dict(type="Conv3d", bias=False),
         norm_cfg=dict(type="GN", num_groups=32, requires_grad=True),
-        class_frequencies=semantic_kitti_class_frequencies,
+        balance_cls_weight=False,
+        class_frequencies=tartanair_class_frequencies,
+        num_classes=34
     ),
 )
 
-"""Training params."""
+# Training params
 learning_rate = 3e-4
 training_steps = 25000
 
@@ -392,6 +455,9 @@ lr_scheduler = dict(
     interval="step",
     frequency=1,
 )
+
 optimizer_config = dict(grad_clip=dict(max_norm=20, norm_type=2))
-# sync_bn = True # Turn on sync BN if you uise more than 2 GPUs, which may (not must) improve the performance.
+
+# Pretrained model path (update as needed)
 load_from = "ckpts/preatrain_depth_model.ckpt"
+

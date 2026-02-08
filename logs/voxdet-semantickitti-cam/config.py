@@ -1,6 +1,6 @@
-data_root = '/mnt/vita/scratch/datasets/SemanticKITTI/dataset/'
-ann_file = '/mnt/vita/scratch/datasets/SemanticKITTI/dataset/labels/'
-stereo_depth_root = '/mnt/vita/scratch/datasets/SemanticKITTI/depth/'
+data_root = 'data/kitti/dataset/'
+ann_file = 'data/kitti/dataset/labels/'
+stereo_depth_root = 'data/kitti/dataset/depth/'
 camera_used = ['left']
 dataset_type = 'SemanticKITTIDataset'
 point_cloud_range = [0, -25.6, -2, 51.2, 25.6, 4.4]
@@ -46,7 +46,7 @@ train_pipeline = [
         color_jitter=(0.4, 0.4, 0.4)),
     dict(
         type='CreateDepthFromLiDAR',
-        data_root='/mnt/vita/scratch/datasets/SemanticKITTI/dataset/',
+        data_root='data/kitti/dataset/',
         dataset='kitti',
         load_seg=False),
     dict(
@@ -70,9 +70,9 @@ train_pipeline = [
 ]
 trainset_config = dict(
     type='SemanticKITTIDataset',
-    stereo_depth_root='/mnt/vita/scratch/datasets/SemanticKITTI/depth/',
-    data_root='/mnt/vita/scratch/datasets/SemanticKITTI/dataset/',
-    ann_file='/mnt/vita/scratch/datasets/SemanticKITTI/dataset/labels/',
+    stereo_depth_root='data/kitti/dataset/depth/',
+    data_root='data/kitti/dataset/',
+    ann_file='data/kitti/dataset/labels/',
     pipeline=[
         dict(
             type='LoadMultiViewImageFromFiles',
@@ -88,7 +88,7 @@ trainset_config = dict(
             color_jitter=(0.4, 0.4, 0.4)),
         dict(
             type='CreateDepthFromLiDAR',
-            data_root='/mnt/vita/scratch/datasets/SemanticKITTI/dataset/',
+            data_root='data/kitti/dataset/',
             dataset='kitti',
             load_seg=False),
         dict(
@@ -130,7 +130,7 @@ test_pipeline = [
         color_jitter=None),
     dict(
         type='CreateDepthFromLiDAR',
-        data_root='/mnt/vita/scratch/datasets/SemanticKITTI/dataset/',
+        data_root='data/kitti/dataset/',
         dataset='kitti'),
     dict(
         type='LoadAnnotationOcc',
@@ -154,9 +154,9 @@ test_pipeline = [
 ]
 testset_config = dict(
     type='SemanticKITTIDataset',
-    stereo_depth_root='/mnt/vita/scratch/datasets/SemanticKITTI/depth/',
-    data_root='/mnt/vita/scratch/datasets/SemanticKITTI/dataset/',
-    ann_file='/mnt/vita/scratch/datasets/SemanticKITTI/dataset/labels/',
+    stereo_depth_root='data/kitti/dataset/depth/',
+    data_root='data/kitti/dataset/',
+    ann_file='data/kitti/dataset/labels/',
     pipeline=[
         dict(
             type='LoadMultiViewImageFromFiles',
@@ -172,7 +172,7 @@ testset_config = dict(
             color_jitter=None),
         dict(
             type='CreateDepthFromLiDAR',
-            data_root='/mnt/vita/scratch/datasets/SemanticKITTI/dataset/',
+            data_root='data/kitti/dataset/',
             dataset='kitti'),
         dict(
             type='LoadAnnotationOcc',
@@ -201,9 +201,9 @@ testset_config = dict(
 data = dict(
     train=dict(
         type='SemanticKITTIDataset',
-        stereo_depth_root='/mnt/vita/scratch/datasets/SemanticKITTI/depth/',
-        data_root='/mnt/vita/scratch/datasets/SemanticKITTI/dataset/',
-        ann_file='/mnt/vita/scratch/datasets/SemanticKITTI/dataset/labels/',
+        stereo_depth_root='data/kitti/dataset/depth/',
+        data_root='data/kitti/dataset/',
+        ann_file='data/kitti/dataset/labels/',
         pipeline=[
             dict(
                 type='LoadMultiViewImageFromFiles',
@@ -219,7 +219,7 @@ data = dict(
                 color_jitter=(0.4, 0.4, 0.4)),
             dict(
                 type='CreateDepthFromLiDAR',
-                data_root='/mnt/vita/scratch/datasets/SemanticKITTI/dataset/',
+                data_root='data/kitti/dataset/',
                 dataset='kitti',
                 load_seg=False),
             dict(
@@ -248,9 +248,9 @@ data = dict(
         test_mode=False),
     val=dict(
         type='SemanticKITTIDataset',
-        stereo_depth_root='/mnt/vita/scratch/datasets/SemanticKITTI/depth/',
-        data_root='/mnt/vita/scratch/datasets/SemanticKITTI/dataset/',
-        ann_file='/mnt/vita/scratch/datasets/SemanticKITTI/dataset/labels/',
+        stereo_depth_root='data/kitti/dataset/depth/',
+        data_root='data/kitti/dataset/',
+        ann_file='data/kitti/dataset/labels/',
         pipeline=[
             dict(
                 type='LoadMultiViewImageFromFiles',
@@ -266,7 +266,7 @@ data = dict(
                 color_jitter=None),
             dict(
                 type='CreateDepthFromLiDAR',
-                data_root='/mnt/vita/scratch/datasets/SemanticKITTI/dataset/',
+                data_root='data/kitti/dataset/',
                 dataset='kitti'),
             dict(
                 type='LoadAnnotationOcc',
@@ -294,9 +294,9 @@ data = dict(
         pc_range=[0, -25.6, -2, 51.2, 25.6, 4.4]),
     test=dict(
         type='SemanticKITTIDataset',
-        stereo_depth_root='/mnt/vita/scratch/datasets/SemanticKITTI/depth/',
-        data_root='/mnt/vita/scratch/datasets/SemanticKITTI/dataset/',
-        ann_file='/mnt/vita/scratch/datasets/SemanticKITTI/dataset/labels/',
+        stereo_depth_root='data/kitti/dataset/depth/',
+        data_root='data/kitti/dataset/',
+        ann_file='data/kitti/dataset/labels/',
         pipeline=[
             dict(
                 type='LoadMultiViewImageFromFiles',
@@ -312,7 +312,7 @@ data = dict(
                 color_jitter=None),
             dict(
                 type='CreateDepthFromLiDAR',
-                data_root='/mnt/vita/scratch/datasets/SemanticKITTI/dataset/',
+                data_root='data/kitti/dataset/',
                 dataset='kitti'),
             dict(
                 type='LoadAnnotationOcc',
@@ -338,7 +338,7 @@ data = dict(
         camera_used=['left'],
         occ_size=[256, 256, 32],
         pc_range=[0, -25.6, -2, 51.2, 25.6, 4.4]))
-train_dataloader_config = dict(batch_size=2, num_workers=4)
+train_dataloader_config = dict(batch_size=1, num_workers=4)
 test_dataloader_config = dict(batch_size=1, num_workers=4)
 numC_Trans = 128
 lss_downsample = [2, 2, 2]
@@ -414,7 +414,7 @@ model = dict(
             resize_test=0.0),
         init_cfg=None),
     VoxFormer_head=dict(
-        type='VoxFormerHead_Tiny',
+        type='VoxFormerHeadCrossAttention',
         volume_h=128,
         volume_w=128,
         volume_z=16,
@@ -514,7 +514,8 @@ model = dict(
             262978.0, 283696.0, 204750.0, 61688703.0, 4502961.0, 44883650.0,
             2269923.0, 56840218.0, 15719652.0, 158442623.0, 2061623.0,
             36970522.0, 1151988.0, 334146.0
-        ]),
+        ],
+        num_classes=17),
     pts_bbox_head=dict(
         type='VoxDetHead',
         down_sampling_ratio=0.5,
@@ -557,11 +558,11 @@ lr_scheduler = dict(
     interval='step',
     frequency=1)
 optimizer_config = dict(grad_clip=dict(max_norm=20, norm_type=2))
-load_from = '/mnt/vita/scratch/vita-students/users/wuli/code/VoxDet_dev/ckpt/preatrain_depth_model.ckpt'
-config_path = 'configs/voxdet-semantickitti-r50-v1.py'
+load_from = 'ckpts/preatrain_depth_model.ckpt'
+config_path = 'configs/voxdet-semantickitti-cam.py'
 ckpt_path = None
 seed = 42
-log_folder = 'exps/voxdet-semantickitti-r50-v1'
+log_folder = 'logs/voxdet-semantickitti-cam'
 save_path = None
 test_mapping = False
 submit = False

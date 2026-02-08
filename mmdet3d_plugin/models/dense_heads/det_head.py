@@ -54,8 +54,8 @@ def generate_grid(offsets):
 
     sample_z = torch.clamp(grid_z - offset_z_neg.float(), 0, Z - 1)
     coords_list.append(create_grid(grid_x, grid_y, sample_z, X, Y, Z, device))
-    return coords_list
 
+    return coords_list
 
 class VoxelAttentionAggregation(nn.Module):
     def __init__(self, in_channels, num_directions=6, dropout_rate=0.0, use_bias=True, align_corners=False, kernel_size=1, num_groups=32):
@@ -122,7 +122,6 @@ class VoxelAttentionAggregation(nn.Module):
         return out
  
 
-
 @HEADS.register_module()
 class VoxDetHead(nn.Module):
     def __init__(
@@ -139,6 +138,7 @@ class VoxDetHead(nn.Module):
         conv_cfg=dict(type='Conv3d', bias=False),
         norm_cfg=dict(type='GN', num_groups=32, requires_grad=True),
         class_frequencies=None,
+        num_classes=34,
         train_cfg=None,
         test_cfg=None,
         use_sigmoid=True,
@@ -252,6 +252,7 @@ class VoxDetHead(nn.Module):
             self.cls_convs.append(cls_conv)
 
         self.class_frequencies = class_frequencies
+        self.num_classes = num_classes
         if balance_cls_weight:
             self.class_weights = torch.from_numpy(1 / np.log(np.array(class_frequencies) + 0.001))
             if enhance_car > 1.0:
@@ -259,7 +260,7 @@ class VoxDetHead(nn.Module):
                 self.class_weights[4] *= enhance_car
 
         else:
-            self.class_weights = torch.ones(17) / 17
+            self.class_weights = torch.ones(self.num_classes) / self.num_classes
         self.offset_scale = offset_scale
             
     def forward(self, voxel_feats, img_metas=None, img_feats=None, gt_occ=None, gt_offset=None):
@@ -305,7 +306,7 @@ class VoxDetHead(nn.Module):
             'output_voxels': output_cls
         }
         return result
-    
+
     def loss(self, output_voxels, target_voxels, output_bbox=None, img_metas=None,gt_offset=None):                                         
         loss_dict = {}
         if self.use_class_mean:

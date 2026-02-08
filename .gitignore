@@ -3,4 +3,10 @@ data/
 **/build
 pred/
 **.pth
+logs/
+**.avi
+**.mp4
+prediction/
+vis/
+vis_compare/
 ckpts/

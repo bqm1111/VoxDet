@@ -43,9 +43,10 @@ class GeometryDepth_Net(BaseModule):
         self.numC_Trans = numC_Trans
         self.cam_channels = cam_channels
         self.grid_config = grid_config
-
+        print("-------------- > Grid config = ", grid_config)
         ds = torch.arange(*self.grid_config['dbound'], dtype=torch.float).view(-1, 1, 1)
         D, _, _ = ds.shape
+        print("---------------> Depth shape here = ", D)
         self.D = D
         self.cam_depth_range = self.grid_config['dbound']
         self.stereo_volume_encoder = StereoVolumeEncoder(
@@ -128,7 +129,7 @@ class GeometryDepth_Net(BaseModule):
         gt_depths = F.one_hot(gt_depths.long(), num_classes=self.D + 1).view(-1, self.D + 1)[:, 1:]
         
         return gt_depths_vals, gt_depths.float()
-    
+
     def get_depth_dist(self, x):
         return x.softmax(dim=1)
     

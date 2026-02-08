@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
     config.dump(os.path.join(log_folder, 'config.py'))
     profiler = SimpleProfiler(dirpath=log_folder, filename="profiler.txt")
-
+    
     seed = config.seed
     pl.seed_everything(seed)
     num_gpu = torch.cuda.device_count()
@@ -98,6 +98,6 @@ if __name__ == '__main__':
             logger=tb_logger,
             profiler=profiler
         )
-        trainer.test(model=model, datamodule=data_dm, ckpt_path=config['ckpt_path'])
+        trainer.test(model=model, datamodule=data_dm, ckpt_path=config['ckpt_path'])    
 
-
+                

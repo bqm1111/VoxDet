@@ -74,7 +74,7 @@ class VoxDet(BaseModule):
         global_scale_filter_min=None,
     ):
         super().__init__()
-
+         
         self.img_backbone = builder.build_backbone(img_backbone)
         self.img_neck = builder.build_neck(img_neck)
         self.global_scale_filter_min = global_scale_filter_min
@@ -114,7 +114,7 @@ class VoxDet(BaseModule):
         x = x.view(B, N, output_dim, ouput_H, output_W)
         
         return x
-    
+
     def extract_img_feat(self, img_inputs, img_metas):
         img_enc_feats = self.image_encoder(img_inputs[0]) # torch.Size([1, 1, 640, 48, 160])
         B,N,C,H,W =img_inputs[0].size()
@@ -126,7 +126,7 @@ class VoxDet(BaseModule):
             coarse_queries = self.img_view_transformer(context, depth, img_inputs[1:7]) # V_QA
         else:
             coarse_queries = None
-
+        
         proposal = self.proposal_layer(img_inputs[1:7], img_metas)
         # torch.Size([1, 1, 128, 128, 16])
         # torch.Size([1, 1, 128, 48, 160])
@@ -158,13 +158,13 @@ class VoxDet(BaseModule):
                 img_metas=img_metas,
                 mlvl_dpt_dists=[depth.unsqueeze(1)]
             )
-
+        
         # ([1, 1, 128, 128, 16])
         # print(x.shape)
         # torch.Size([1, 128, 128, 128, 16])
         # torch.Size([1, 112, 48, 160])
         return x, depth, proposal
-    
+
     def occ_encoder(self, x):
         if hasattr(self, 'occ_encoder_backbone'):
             x = self.occ_encoder_backbone(x)
@@ -174,7 +174,6 @@ class VoxDet(BaseModule):
 
         return x
     
-
     def forward_train(self, data_dict):
         img_inputs = data_dict['img_inputs']
         img_metas = data_dict['img_metas']
@@ -195,7 +194,7 @@ class VoxDet(BaseModule):
             gt_occ_ = gt_occ.clone() 
             gt_offset = compute_all_direction_distances(gt_occ_)
 
-         
+        
         if self.use_gt_refine:
             # Remove super long cars as mentioned in the Appendix
             len_x = gt_offset[:,0,:,:,:] + gt_offset[:,1,:,:,:] # X axis b x y z
@@ -210,7 +209,7 @@ class VoxDet(BaseModule):
                 cls_mask = (gt_occ_ == 1) # for car
                 car_mask_max =(x_mask_max | y_mask_max | z_mask_max).bool() & cls_mask
                 gt_occ_[car_mask_max] = 255
-                
+
 
             if self.car_scale_filter_min is not None:
                 x_mask_min = len_x < self.car_scale_filter_min[0]
@@ -235,8 +234,7 @@ class VoxDet(BaseModule):
                 # gt_occ_[len_z < self.global_scale_filter_min[2]] = 255
 
             gt_occ = gt_occ_
-
-
+        
         output = self.pts_bbox_head(
             voxel_feats=voxel_feats_enc,
             img_metas=img_metas,
@@ -247,7 +245,6 @@ class VoxDet(BaseModule):
 
         losses = dict()
         if hasattr(self, 'pts_bbox_head_aux'):
-
             if type(img_voxel_feats) is not list:
                 img_voxel_feats = [img_voxel_feats]
             output_aux = self.pts_bbox_head_aux(
@@ -284,7 +281,7 @@ class VoxDet(BaseModule):
             img_metas=img_metas,
             gt_offset=gt_offset,
         )
-
+        
         losses.update(losses_occupancy)
         pred = output['output_voxels']
         pred = torch.argmax(pred, dim=1)
@@ -296,7 +293,7 @@ class VoxDet(BaseModule):
         }
 
         return train_output
-    
+    # 
     def forward_test(self, data_dict):
         img_inputs = data_dict['img_inputs']
         img_metas = data_dict['img_metas']
@@ -310,7 +307,7 @@ class VoxDet(BaseModule):
 
         if type(voxel_feats_enc) is not list:
             voxel_feats_enc = [voxel_feats_enc]
-                
+        
         output = self.pts_bbox_head(
             voxel_feats=voxel_feats_enc,
             img_metas=img_metas,
@@ -327,9 +324,10 @@ class VoxDet(BaseModule):
 
         return test_output
 
+
     def forward(self, data_dict):
         if self.training:
             return self.forward_train(data_dict)
         else:
             return self.forward_test(data_dict)
-
+        

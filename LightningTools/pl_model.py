@@ -22,7 +22,7 @@ class pl_model(LightningBaseModel):
         
         self.num_class = config['num_class']
         self.class_names = config['class_names']
-
+        
         self.train_metrics = SSCMetrics(config['num_class'])
         self.val_metrics = SSCMetrics(config['num_class'])
         self.test_metrics = SSCMetrics(config['num_class'])
@@ -57,9 +57,8 @@ class pl_model(LightningBaseModel):
             self.train_metrics.add_batch(pred, gt_occ)
 
         return loss
-    
+
     def validation_step(self, batch, batch_idx):
-        
         output_dict = self.forward(batch)
         
         if not self.pretrain:
@@ -67,7 +66,7 @@ class pl_model(LightningBaseModel):
             gt_occ = output_dict['gt_occ'].detach().cpu().numpy()
 
             self.val_metrics.add_batch(pred, gt_occ)
-    
+
     def validation_epoch_end(self, outputs):
         metric_list = [("train", self.train_metrics), ("val", self.val_metrics)]
         # metric_list = [("val", self.val_metrics)]
@@ -87,7 +86,7 @@ class pl_model(LightningBaseModel):
                 self.log("{}/IoU_{}".format(prefix,name), torch.tensor(iou, dtype=torch.float32), sync_dist=True)
 
             metric.reset()
-    
+
     def test_step(self, batch, batch_idx):
         output_dict = self.forward(batch)
 
@@ -113,7 +112,7 @@ class pl_model(LightningBaseModel):
             with open(save_file, 'wb') as f:
                 output_voxels.tofile(f)
                 print('\n save to {}'.format(save_file))
-            
+
         if gt_occ is not None:
             self.test_metrics.add_batch(pred, gt_occ)
     

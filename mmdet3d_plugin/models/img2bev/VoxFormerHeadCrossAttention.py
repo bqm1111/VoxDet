@@ -105,8 +105,8 @@ class VoxFormerHeadCrossAttention(nn.Module):
         vox_coords, ref_3d = self.vox_coords.clone(), self.ref_3d.clone()
         unmasked_idx = torch.nonzero(proposal.reshape(-1) > 0).view(-1)
         masked_idx = torch.nonzero(proposal.reshape(-1) == 0).view(-1)
-        
         # Compute seed features of query proposals by deformable cross attention
+        
         seed_feats = self.cross_transformer.get_vox_features(
             mlvl_feats,
             volume_queries,

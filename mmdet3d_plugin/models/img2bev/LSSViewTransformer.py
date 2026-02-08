@@ -104,7 +104,6 @@ class LSSViewTransformer(BaseModule):
         
         return points
 
-    
     def forward(self, feat, depth_prob, cam_params):
         B, N, C, H, W = feat.shape
         rots, trans, intrins, post_rots, post_trans, bda = cam_params
@@ -117,9 +116,10 @@ class LSSViewTransformer(BaseModule):
         volume = depth_prob.unsqueeze(2) * feat.unsqueeze(3)
         volume = volume.view(B, N, -1, self.D, H, W)
         volume = volume.permute(0, 1, 3, 4, 5, 2)
-
+        
         # Splat
         geom = self.get_geometry(rots, trans, intrins, post_rots, post_trans, bda)
         bev_feat = self.voxel_pooling(geom, volume)
 
         return bev_feat
+

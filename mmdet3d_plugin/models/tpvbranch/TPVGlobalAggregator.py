@@ -17,7 +17,7 @@ class TPVPooler(BaseModule):
             kernel_size=[1, 1, grid_size[2]//split[2]],
             stride=[1, 1, grid_size[2]//split[2]], padding=0
         )
-
+        
         self.pool_yz = nn.MaxPool3d(
             kernel_size=[grid_size[0]//split[0], 1, 1],
             stride=[grid_size[0]//split[0], 1, 1], padding=0

@@ -44,3 +44,4 @@ def test_load_multi_view_image_from_files():
 
     assert isinstance(img, DataContainer)
     assert img._data.shape == torch.Size((num_views, 3, 1280, 1920))
+

@@ -4,7 +4,7 @@ import numpy as np
 from mmdet.datasets import DATASETS
 from torch.utils.data import Dataset
 from mmdet.datasets.pipelines import Compose
-
+from mmdet3d_plugin.datasets.pipelines import LoadMultiViewImageFromFiles
 
 @DATASETS.register_module()
 class SemanticKITTIDataset(Dataset):
@@ -362,6 +362,76 @@ if __name__ == "__main__":
         ),
     ]
 
+    train_pipeline = [
+        dict(
+            type="LoadMultiViewImageFromFiles",
+            data_config=data_config,
+            load_stereo_depth=True,
+            is_train=True,
+            color_jitter=(0.4, 0.4, 0.4),
+        ),
+        dict(
+            type="CreateDepthFromLiDAR",
+            data_root=data_root,
+            dataset="kitti",
+            load_seg=False,
+        ),
+        dict(
+            type="LoadAnnotationOcc",
+            bda_aug_conf=bda_aug_conf,
+            apply_bda=False,
+            is_train=True,
+            point_cloud_range=point_cloud_range,
+        ),
+        dict(
+            type="CollectData",
+            keys=["img_inputs", "gt_occ"],
+            meta_keys=[
+                "pc_range",
+                "occ_size",
+                "raw_img",
+                "stereo_depth",
+                "focal_length",
+                "baseline",
+                "img_shape",
+                "gt_depths",
+            ],
+        ),
+    ]
+    test_pipeline = [
+        dict(
+            type="LoadMultiViewImageFromFiles",
+            data_config=data_config,
+            load_stereo_depth=True,
+            is_train=False,
+            color_jitter=None,
+        ),
+        dict(type="CreateDepthFromLiDAR", data_root=data_root, dataset="kitti"),
+        dict(
+            type="LoadAnnotationOcc",
+            bda_aug_conf=bda_aug_conf,
+            apply_bda=False,
+            is_train=False,
+            point_cloud_range=point_cloud_range,
+        ),
+        dict(
+            type="CollectData",
+            keys=["img_inputs", "gt_occ"],
+            meta_keys=[
+                "pc_range",
+                "occ_size",
+                "sequence",
+                "frame_id",
+                "raw_img",
+                "stereo_depth",
+                "focal_length",
+                "baseline",
+                "img_shape",
+                "gt_depths",
+            ],
+        ),
+    ]
+
     dataset = SemanticKITTIDataset(
         data_root="data/kitti/dataset",
         ann_file="data/kitti/dataset/labels/",
@@ -370,12 +440,13 @@ if __name__ == "__main__":
         occ_size=[256, 256, 32],
         pc_range=[0, -25.6, -2, 51.2, 25.6, 4.4],
         split="test",
-        pipeline=None,
+        pipeline=test_pipeline,
         test_mode=True,
     )
 
     dataloader = DataLoader(dataset=dataset, batch_size=1, shuffle=False, num_workers=4)
     import torch
+
     for idx, data in enumerate(dataloader):
         if idx == 0:
             print(data.keys())
@@ -384,6 +455,5 @@ if __name__ == "__main__":
             for k in data.keys():
                 if k != "gt_occ":
                     print(f"data[{k}] = {data[k]}")
-                
-            break
 
+            break

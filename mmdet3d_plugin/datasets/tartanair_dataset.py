@@ -151,7 +151,7 @@ class TartanAirDataset(Dataset):
             example = input_dict
         return example
 
-    #
+
     def __getitem__(self, idx):
         if self.test_mode:
             return self.prepare_test_data(idx)
@@ -698,3 +698,5 @@ def read_tartanair_depth(depth_path):
 def read_tartanair_seg(seg_path):
     """Read TartanAir segmentation image."""
     return TartanAirDataset._read_segmentation(seg_path)
+
+# This is something else. 

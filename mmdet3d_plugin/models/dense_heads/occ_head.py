@@ -73,7 +73,7 @@ class OccHeadCLIP(nn.Module):
             self.class_weights = torch.from_numpy(1 / np.log(np.array(class_frequencies) + 0.001))
         else:
             self.class_weights = torch.ones(17)/17  # FIXME hardcode 17
-    
+
     def forward(self, voxel_feats, img_metas=None, img_feats=None, gt_occ=None):
         assert type(voxel_feats) is list and len(voxel_feats) == self.num_level
 
@@ -100,7 +100,7 @@ class OccHeadCLIP(nn.Module):
         loss_dict['loss_voxel_geo_scal'] = self.loss_voxel_geo_scal_weight * geo_scal_loss(output_voxels, target_voxels, ignore_index=255, non_empty_idx=self.empty_idx)
 
         return loss_dict
-
+# 
 @HEADS.register_module()
 class OccHead(nn.Module):
     def __init__(
@@ -116,6 +116,7 @@ class OccHead(nn.Module):
         conv_cfg=dict(type='Conv3d', bias=False),
         norm_cfg=dict(type='GN', num_groups=32, requires_grad=True),
         class_frequencies=None,
+        num_classes=17,
         train_cfg=None,
         test_cfg=None
     ):
@@ -159,11 +160,12 @@ class OccHead(nn.Module):
             )
             self.occ_convs.append(occ_conv)
         self.class_frequencies = class_frequencies
+        self.num_classes = num_classes
         # loss functions
         if balance_cls_weight:
             self.class_weights = torch.from_numpy(1 / np.log(np.array(class_frequencies) + 0.001))
         else:
-            self.class_weights = torch.ones(17)/17  # FIXME hardcode 17
+            self.class_weights = torch.ones(self.num_classes)/self.num_classes  # FIXME hardcode 17
     
     def forward(self, voxel_feats, img_metas=None, img_feats=None, gt_occ=None):
         assert type(voxel_feats) is list and len(voxel_feats) == self.num_level

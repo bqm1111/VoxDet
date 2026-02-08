@@ -20,7 +20,7 @@ class Fuser(BaseModule):
             nn.Conv3d(embed_dims, 4, kernel_size=1, bias=False),
             nn.Softmax(dim=1)
         )
-    
+    # 
     def forward(self, x):
         local_feats = self.local_aggregator(x)
         global_feats = self.global_aggregator(x)
@@ -31,7 +31,19 @@ class Fuser(BaseModule):
             global_feats[1] * weights[:, 2:3, ...] + global_feats[2] * weights[:, 3:4, ...]
 
         return out_feats
+
+@BACKBONES.register_module()
+class Ident(BaseModule):
+    def __init__(self, embed_dims=128,
+                 global_aggregator=None,
+                 local_aggregator=None):
+        super().__init__()
+        self.local_aggregator = builder.build_backbone(local_aggregator)
     
+    def forward(self, x):
+        local_feats = self.local_aggregator(x)
+
+        return local_feats
 
 
 @BACKBONES.register_module()

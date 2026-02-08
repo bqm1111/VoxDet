@@ -76,6 +76,7 @@ class SSCMetrics:
         """for scene completion, treat the task as two-classes problem, just empty or occupancy"""
         _bs = predict.shape[0]
         # ---- ignore
+
         predict[target == 255] = 0
         target[target == 255] = 0
         # ---- flatten
@@ -105,7 +106,7 @@ class SSCMetrics:
             fn_sum += fn
         
         return tp_sum, fp_sum, fn_sum
-    
+        
     def get_score_semantic_and_completion(self, predict, target, nonempty=None):
         target = np.copy(target)
         predict = np.copy(predict)

@@ -31,7 +31,7 @@ class LoadMultiViewImageFromFiles(object):
         color_jitter=(0.4, 0.4, 0.4),
     ):
         super().__init__()
-
+        print("===============+> Jump here to load image")
         self.is_train = is_train
         self.data_config = data_config
         self.img_norm_cfg = img_norm_cfg
