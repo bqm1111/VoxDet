@@ -10,7 +10,7 @@ from os import path as osp
 from pyquaternion import Quaternion
 
 from mmdet3d.core.evaluation.lyft_eval import lyft_eval
-from mmdet.datasets import DATASETS
+from mmdet.registry import DATASETS
 from ..core import show_result
 from ..core.bbox import Box3DMode, Coord3DMode, LiDARInstance3DBoxes
 from .custom_3d import Custom3DDataset

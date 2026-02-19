@@ -1,7 +1,7 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import warnings
 from abc import ABCMeta
-from mmcv.runner import BaseModule
+from mmengine.model import BaseModule
 
 
 class BasePointNet(BaseModule, metaclass=ABCMeta):

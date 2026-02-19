@@ -6,7 +6,7 @@ import tempfile
 from nuscenes.utils.data_classes import Box as NuScenesBox
 from os import path as osp
 
-from mmdet.datasets import DATASETS
+from mmdet.registry import DATASETS
 from ..core import show_result
 from ..core.bbox import Box3DMode, Coord3DMode, LiDARInstance3DBoxes
 from .custom_3d import Custom3DDataset

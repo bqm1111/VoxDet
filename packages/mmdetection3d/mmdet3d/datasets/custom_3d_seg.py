@@ -6,7 +6,7 @@ import warnings
 from os import path as osp
 from torch.utils.data import Dataset
 
-from mmdet.datasets import DATASETS
+from mmdet.registry import DATASETS
 from mmseg.datasets import DATASETS as SEG_DATASETS
 from .pipelines import Compose
 from .utils import extract_result_dict, get_loading_pipeline

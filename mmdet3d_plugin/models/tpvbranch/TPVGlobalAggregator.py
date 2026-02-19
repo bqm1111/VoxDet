@@ -1,6 +1,6 @@
-from mmdet3d.models.builder import BACKBONES
+from mmdet3d.registry import MODELS as BACKBONES
 import torch
-from mmcv.runner import BaseModule
+from mmengine.model import BaseModule
 from mmdet3d.models import builder
 import torch.nn as nn
 import torch.nn.functional as F

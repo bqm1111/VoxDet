@@ -3,9 +3,9 @@ import pdb
 import glob
 import socket
 import numpy as np
-from mmdet.datasets import DATASETS
+from mmdet.registry import DATASETS
 from torch.utils.data import Dataset
-from mmdet.datasets.pipelines import Compose
+from mmengine.dataset import Compose
 
 
 @DATASETS.register_module()

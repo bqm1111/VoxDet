@@ -5,8 +5,8 @@ import torch.nn.functional as F
 import torch_scatter
 import numpy as np
 from spconv.pytorch import SparseConvTensor, SparseMaxPool3d
-from mmdet.models import BACKBONES
-from mmcv.runner import BaseModule
+from mmdet.registry import MODELS as BACKBONES
+from mmengine.model import BaseModule
 
 
 @BACKBONES.register_module()

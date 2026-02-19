@@ -1,5 +1,5 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from mmdet.models import DETECTORS
+from mmdet.registry import MODELS as DETECTORS
 from .votenet import VoteNet
 
 

@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 from mmdet3d.models.builder import NECKS
 from mmdet3d.ops.bev_pool import bev_pool
-from mmcv.runner import BaseModule
+from mmengine.model import BaseModule
 
 def gen_dx_bx(xbound, ybound, zbound):
     dx = torch.Tensor([row[2] for row in [xbound, ybound, zbound]])

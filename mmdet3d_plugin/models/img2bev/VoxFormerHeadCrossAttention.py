@@ -16,7 +16,7 @@ import torch
 import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
-from mmdet.models import HEADS
+from mmdet.registry import MODELS as HEADS
 from mmdet.models.utils import build_transformer
 from mmcv.cnn.bricks.transformer import build_positional_encoding
 

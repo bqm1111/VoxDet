@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
 import numpy as np
-from mmdet.models import HEADS
-from mmcv.runner import BaseModule
+from mmdet.registry import MODELS as HEADS
+from mmengine.model import BaseModule
 from .modules.utils import Voxelization
 import spconv.pytorch as spconv
 

@@ -1,8 +1,8 @@
 import torch.utils.checkpoint as checkpoint
 from torch import nn
-from mmcv.runner import BaseModule
+from mmengine.model import BaseModule
 from mmcv.cnn.bricks.conv_module import ConvModule
-from mmdet.models import BACKBONES
+from mmdet.registry import MODELS as BACKBONES
 from mmdet.models.backbones.resnet import Bottleneck
 from mmcv.cnn import build_conv_layer, build_norm_layer, build_plugin_layer
 from timm.layers import DropPath

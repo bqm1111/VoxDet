@@ -15,12 +15,13 @@ from mmcv.ops.multi_scale_deform_attn import multi_scale_deformable_attn_pytorch
 import warnings
 import torch
 import torch.nn as nn
-from mmcv.cnn import xavier_init, constant_init
-from mmcv.cnn.bricks.registry import ATTENTION
+from mmengine.model.weight_init import xavier_init, constant_init
+from mmdet.registry import MODELS as ATTENTION
 import math
-from mmcv.runner.base_module import BaseModule, ModuleList, Sequential
-from mmcv.utils import (ConfigDict, build_from_cfg, deprecated_api_warning,
-                        to_2tuple)
+from mmengine.model import BaseModule
+
+# drop-in replacement for mmcv's Sequential wrapper
+Sequential = nn.Sequential
 
 from mmcv.utils import ext_loader
 ext_module = ext_loader.load_ext(

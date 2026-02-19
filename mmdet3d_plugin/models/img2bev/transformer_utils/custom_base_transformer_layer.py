@@ -10,12 +10,17 @@ import warnings
 import torch
 import torch.nn as nn
 
-from mmcv import ConfigDict, deprecated_api_warning
-from mmcv.cnn import Linear, build_activation_layer, build_norm_layer
-from mmcv.runner.base_module import BaseModule, ModuleList, Sequential
+from mmengine.config import ConfigDict
 
-from mmcv.cnn.bricks.registry import (ATTENTION, FEEDFORWARD_NETWORK, POSITIONAL_ENCODING,
-                                      TRANSFORMER_LAYER, TRANSFORMER_LAYER_SEQUENCE)
+from mmcv.cnn import Linear, build_activation_layer, build_norm_layer
+from mmengine.model import BaseModule
+from mmengine.model import ModuleList
+
+# drop-in replacement for mmcv's Sequential wrapper
+Sequential = nn.Sequential
+
+from mmdet.registry import MODELS as TRANSFORMER_LAYER
+
 
 # Avoid BC-breaking of importing MultiScaleDeformableAttention from this file
 try:

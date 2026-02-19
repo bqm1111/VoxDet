@@ -8,7 +8,7 @@ import torch
 from mmcv.utils import print_log
 from os import path as osp
 
-from mmdet.datasets import DATASETS
+from mmdet.registry import DATASETS
 from ..core import show_multi_modality_result, show_result
 from ..core.bbox import (Box3DMode, CameraInstance3DBoxes, Coord3DMode,
                          LiDARInstance3DBoxes, points_cam2img)

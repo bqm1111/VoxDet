@@ -10,7 +10,7 @@ from mmdet3d.core.bbox.structures import (DepthInstance3DBoxes,
                                           rotation_3d_in_axis)
 from mmdet3d.models.builder import build_loss
 from mmdet.core import multi_apply
-from mmdet.models import HEADS
+from mmdet.registry import MODELS as HEADS
 from .vote_head import VoteHead
 
 

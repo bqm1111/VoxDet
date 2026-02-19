@@ -10,7 +10,7 @@ from nuscenes.utils.data_classes import Box as NuScenesBox
 from os import path as osp
 
 from mmdet3d.core import bbox3d2result, box3d_multiclass_nms, xywhr2xyxyr
-from mmdet.datasets import DATASETS, CocoDataset
+from mmdet.registry import DATASETS, CocoDataset
 from ..core import show_multi_modality_result
 from ..core.bbox import CameraInstance3DBoxes, get_box_type
 from .pipelines import Compose

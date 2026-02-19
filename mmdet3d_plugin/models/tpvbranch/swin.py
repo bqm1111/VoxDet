@@ -16,7 +16,7 @@ from mmengine.model.weight_init import (constant_init, trunc_normal_,
 from mmengine.runner.checkpoint import CheckpointLoader
 from mmengine.utils import to_2tuple
 
-from mmdet3d.models.builder import BACKBONES
+from mmdet3d.registry import MODELS as BACKBONES
 from .modules.swin_utils import PatchEmbed, PatchMerging
 
 class WindowMSA(BaseModule):

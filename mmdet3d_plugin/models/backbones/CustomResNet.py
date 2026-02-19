@@ -1,8 +1,8 @@
 import timm
 import torch
 import torch.nn as nn
-from mmcv.runner import BaseModule
-from mmdet3d.models.builder import BACKBONES
+from mmengine.model import BaseModule
+from mmdet3d.registry import MODELS as BACKBONES
 import torch.utils.model_zoo as model_zoo
 from torch.nn.modules.batchnorm import _BatchNorm
 

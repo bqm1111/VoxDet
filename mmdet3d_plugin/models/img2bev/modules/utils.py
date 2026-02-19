@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 import torch.nn as nn
-from mmcv.runner import BaseModule
+from mmengine.model import BaseModule
 from mmcv.cnn import build_conv_layer, build_norm_layer
 from mmcv.cnn.bricks.conv_module import ConvModule
 

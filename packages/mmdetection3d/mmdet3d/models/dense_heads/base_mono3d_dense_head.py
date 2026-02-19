@@ -1,6 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from abc import ABCMeta, abstractmethod
-from mmcv.runner import BaseModule
+from mmengine.model import BaseModule
 
 
 class BaseMono3DDenseHead(BaseModule, metaclass=ABCMeta):

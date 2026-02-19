@@ -21,7 +21,8 @@ See utils/preprocess_ov_data.py for the generation script.
 import os
 import numpy as np
 import torch
-from mmdet.datasets.builder import PIPELINES
+from mmdet.registry import TRANSFORMS as PIPELINES
+
 
 
 @PIPELINES.register_module()

@@ -1,6 +1,7 @@
 import torch
 import numpy as np
-from mmdet.datasets.builder import PIPELINES
+from mmdet.registry import TRANSFORMS as PIPELINES
+
 
 
 def cart2polar(input_xyz):

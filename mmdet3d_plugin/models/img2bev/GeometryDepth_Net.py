@@ -1,9 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from mmdet3d.models.builder import NECKS
+from mmdet3d.registry import MODELS as NECKS
 from mmdet3d_plugin.utils.gaussian import generate_guassian_depth_target
-from mmcv.runner import BaseModule, force_fp32
+from mmengine.model import BaseModule
 from torch.cuda.amp.autocast_mode import autocast
 from .modules.Mono_DepthNet_modules import DepthNet
 from .modules.Stereo_Depth_Net_modules import SimpleUnet, convbn_2d, DepthAggregation
@@ -62,7 +62,6 @@ class GeometryDepth_Net(BaseModule):
 
         self.depth_aggregation = DepthAggregation(embed_dims=32, out_channels=1)
     
-    @force_fp32()
     def get_bce_depth_loss(self, depth_labels, depth_preds):
         _, depth_labels = self.get_downsampled_gt_depth(depth_labels)
         # depth_labels = self._prepare_depth_gt(depth_labels)
@@ -76,7 +75,6 @@ class GeometryDepth_Net(BaseModule):
         
         return depth_loss
     
-    @force_fp32()
     def get_klv_depth_loss(self, depth_labels, depth_preds):
         depth_gaussian_labels, depth_values = generate_guassian_depth_target(depth_labels,
             self.downsample, self.cam_depth_range, constant_std=self.constant_std)
@@ -91,7 +89,6 @@ class GeometryDepth_Net(BaseModule):
         
         return depth_loss
     
-    @force_fp32()
     def get_depth_loss(self, depth_labels, depth_preds):
         if self.loss_depth_type == 'bce':
             depth_loss = self.get_bce_depth_loss(depth_labels, depth_preds)

@@ -3,12 +3,12 @@ import numpy as np
 import torch
 import warnings
 from mmcv.cnn import ConvModule
-from mmcv.runner import BaseModule
+from mmengine.model import BaseModule
 from torch import nn as nn
 
 from mmdet3d.core import box3d_multiclass_nms, limit_period, xywhr2xyxyr
 from mmdet.core import multi_apply
-from mmdet.models import HEADS
+from mmdet.registry import MODELS as HEADS
 from ..builder import build_head
 from .anchor3d_head import Anchor3DHead
 

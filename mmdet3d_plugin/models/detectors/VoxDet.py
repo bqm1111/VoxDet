@@ -1,7 +1,7 @@
 import torch
-from mmcv.runner import BaseModule
-from mmdet.models import DETECTORS
-from mmdet3d.models import builder
+from mmengine.model import BaseModule
+from mmdet.registry import MODELS
+from mmengine.registry import build_from_cfg
 import torch.nn.functional as F
 
 def run_length_positive(t, dim):
@@ -51,7 +51,7 @@ def compute_all_direction_distances(gt_occ):
     distances = torch.stack([dist_x_pos, dist_x_neg, dist_y_pos, dist_y_neg, dist_z_pos, dist_z_neg], dim=1)
     return distances
 
-@DETECTORS.register_module()
+@MODELS.register_module()
 class VoxDet(BaseModule):
     def __init__(
         self,
@@ -75,26 +75,26 @@ class VoxDet(BaseModule):
     ):
         super().__init__()
         
-        self.img_backbone = builder.build_backbone(img_backbone)
-        self.img_neck = builder.build_neck(img_neck)
+        self.img_backbone = build_from_cfg(img_backbone, MODELS)
+        self.img_neck = build_from_cfg(img_neck, MODELS)
         self.global_scale_filter_min = global_scale_filter_min
-        self.depth_net = builder.build_neck(depth_net)
+        self.depth_net = build_from_cfg(depth_net, MODELS)
         if img_view_transformer is not None:
-            self.img_view_transformer = builder.build_neck(img_view_transformer)
-        self.proposal_layer = builder.build_head(proposal_layer)
-        self.VoxFormer_head = builder.build_head(VoxFormer_head)
+            self.img_view_transformer = build_from_cfg(img_view_transformer, MODELS)
+        self.proposal_layer = build_from_cfg(proposal_layer, MODELS)
+        self.VoxFormer_head = build_from_cfg(VoxFormer_head, MODELS)
         self.use_gt_refine = use_gt_refine
         self.car_scale_filter_max = car_scale_filter_max
         self.car_scale_filter_min = car_scale_filter_min
         
         if occ_encoder_backbone is not None:
-            self.occ_encoder_backbone = builder.build_backbone(occ_encoder_backbone)
+            self.occ_encoder_backbone = build_from_cfg(occ_encoder_backbone, MODELS)
         if occ_encoder_neck is not None:
-            self.occ_encoder_neck = builder.build_neck(occ_encoder_neck)
+            self.occ_encoder_neck = build_from_cfg(occ_encoder_neck, MODELS)
         
-        self.pts_bbox_head = builder.build_head(pts_bbox_head)
+        self.pts_bbox_head = build_from_cfg(pts_bbox_head, MODELS)
         if pts_bbox_head_aux is not None:
-            self.pts_bbox_head_aux = builder.build_head(pts_bbox_head_aux)
+            self.pts_bbox_head_aux = build_from_cfg(pts_bbox_head_aux, MODELS)
             
         self.depth_loss = depth_loss
 

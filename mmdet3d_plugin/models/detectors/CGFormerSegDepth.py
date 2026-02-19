@@ -1,9 +1,9 @@
 import torch
-from mmcv.runner import BaseModule
-from mmdet.models import DETECTORS
-from mmdet3d.models import builder
+from mmengine.model import BaseModule
+from mmengine.registry import build_from_cfg
+from mmdet3d.registry import MODELS
 
-@DETECTORS.register_module()
+@MODELS.register_module()
 class CGFormerSegDepth(BaseModule):
     def __init__(
         self,
@@ -16,10 +16,10 @@ class CGFormerSegDepth(BaseModule):
         test_cfg=None
         ):
         super().__init__()
-        self.img_backbone = builder.build_backbone(img_backbone)
-        self.img_neck = builder.build_neck(img_neck)
-        self.depth_net = builder.build_neck(depth_net)
-        self.plugin_head = builder.build_head(plugin_head)
+        self.img_backbone = build_from_cfg(img_backbone, MODELS)
+        self.img_neck = build_from_cfg(img_neck, MODELS)
+        self.depth_net = build_from_cfg(depth_net, MODELS)
+        self.plugin_head = build_from_cfg(plugin_head, MODELS)
         # self.img_view_transformer = builder.build_neck(img_view_transformer)
     
     def image_encoder(self, img):

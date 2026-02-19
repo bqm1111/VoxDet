@@ -2,7 +2,7 @@
 import platform
 from mmcv.utils import Registry, build_from_cfg
 
-from mmdet.datasets import DATASETS
+from mmdet.registry import DATASETS
 from mmdet.datasets.builder import _concat_dataset
 
 if platform.system() != 'Windows':

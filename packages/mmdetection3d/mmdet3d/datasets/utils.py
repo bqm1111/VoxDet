@@ -11,7 +11,8 @@ from mmdet3d.datasets.pipelines import (Collect3D, DefaultFormatBundle3D,
                                         MultiScaleFlipAug3D,
                                         PointSegClassMapping)
 # yapf: enable
-from mmdet.datasets.builder import PIPELINES
+from mmdet.registry import TRANSFORMS as PIPELINES
+
 from mmdet.datasets.pipelines import LoadImageFromFile
 
 

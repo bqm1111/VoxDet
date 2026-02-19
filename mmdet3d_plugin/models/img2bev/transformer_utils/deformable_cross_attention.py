@@ -15,15 +15,16 @@ import warnings
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from mmcv.cnn import xavier_init, constant_init
-from mmcv.cnn.bricks.registry import (ATTENTION,
-                                      TRANSFORMER_LAYER,
-                                      TRANSFORMER_LAYER_SEQUENCE)
+from mmengine.model.weight_init import xavier_init, constant_init
+from mmdet.registry import MODELS as ATTENTION
 from mmcv.cnn.bricks.transformer import build_attention
 import math
-from mmcv.runner import force_fp32, auto_fp16
+from mmengine.model import BaseModule
+from mmengine.model import ModuleList
 
-from mmcv.runner.base_module import BaseModule, ModuleList, Sequential
+# drop-in replacement for mmcv's Sequential wrapper
+Sequential = nn.Sequential
+
 from mmcv.utils import ext_loader
 from .multi_scale_deformable_attn_function import MultiScaleDeformableAttnFunction_fp32, \
     MultiScaleDeformableAttnFunction_fp16
@@ -79,7 +80,6 @@ class DeformCrossAttention(BaseModule):
         """Default initialization for Parameters of Module."""
         xavier_init(self.output_proj, distribution='uniform', bias=0.)
     
-    @force_fp32(apply_to=('query', 'key', 'value', 'query_pos', 'reference_points_cam'))
     def forward(self,
                 query,
                 key,
@@ -607,7 +607,6 @@ class DeformCrossAttention_DFA3D(DeformCrossAttention):
         if use_empty:
             self.empty_query = nn.Embedding(self.bev_h*self.bev_w*num_head, embed_dims)
 
-    @force_fp32(apply_to=('query', 'key', 'value', 'value_dpt_dist', 'query_pos', 'reference_points_cam'))
     def forward(self,
                 query,
                 key,

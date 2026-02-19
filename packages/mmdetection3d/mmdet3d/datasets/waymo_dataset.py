@@ -7,7 +7,7 @@ import torch
 from mmcv.utils import print_log
 from os import path as osp
 
-from mmdet.datasets import DATASETS
+from mmdet.registry import DATASETS
 from ..core.bbox import Box3DMode, points_cam2img
 from .kitti_dataset import KittiDataset
 

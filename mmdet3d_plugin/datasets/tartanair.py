@@ -1,9 +1,9 @@
 import os
 import glob
 import numpy as np
-from mmdet.datasets import DATASETS
+from mmdet.registry import DATASETS
 from torch.utils.data import Dataset
-from mmdet.datasets.pipelines import Compose
+from mmengine.dataset import Compose
 from scipy.spatial.transform import Rotation
 
 """

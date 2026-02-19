@@ -10,7 +10,7 @@ from mmdet3d.models.losses import chamfer_distance
 from mmdet3d.models.model_utils import VoteModule
 from mmdet3d.ops import build_sa_module, furthest_point_sample
 from mmdet.core import build_bbox_coder, multi_apply
-from mmdet.models import HEADS
+from mmdet.registry import MODELS as HEADS
 from .base_conv_bbox_head import BaseConvBboxHead
 
 

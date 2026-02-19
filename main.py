@@ -1,14 +1,14 @@
 import os
 import misc as misc
 import torch
-from mmcv import Config
+from mmengine.config import Config
 from mmdet3d_plugin import *
 import pytorch_lightning as pl
 from argparse import ArgumentParser
 from LightningTools.pl_model import pl_model
 from LightningTools.dataset_dm import DataModule
 from pytorch_lightning import loggers as pl_loggers
-from pytorch_lightning.profiler import SimpleProfiler
+from pytorch_lightning.profilers import SimpleProfiler
 from pytorch_lightning.strategies.ddp import DDPStrategy
 from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
 import shutil

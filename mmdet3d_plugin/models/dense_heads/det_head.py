@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
-from mmdet.models import HEADS
+from mmdet.registry import MODELS as HEADS
 from mmcv.cnn import build_conv_layer, build_norm_layer
 from mmdet3d_plugin.utils.semkitti import geo_scal_loss, sem_scal_loss, CE_ssc_loss, Focal_CE_ssc_loss, lovasz_softmax_loss, BLV_ssc_loss, CE_ssc_loss_balance
 

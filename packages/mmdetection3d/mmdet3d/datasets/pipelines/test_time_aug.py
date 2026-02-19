@@ -3,8 +3,9 @@ import mmcv
 import warnings
 from copy import deepcopy
 
-from mmdet.datasets.builder import PIPELINES
-from mmdet.datasets.pipelines import Compose
+from mmdet.registry import TRANSFORMS as PIPELINES
+
+from mmengine.dataset import Compose
 
 
 @PIPELINES.register_module()

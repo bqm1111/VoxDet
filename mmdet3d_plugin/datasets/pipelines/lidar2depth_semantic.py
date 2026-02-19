@@ -1,7 +1,8 @@
 import os
 import torch
 import numpy as np
-from mmdet.datasets.builder import PIPELINES
+from mmdet.registry import TRANSFORMS as PIPELINES
+
 
 learning_map={
   0 : 0,     # "unlabeled"

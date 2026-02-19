@@ -1,5 +1,5 @@
-from mmdet.datasets.builder import PIPELINES
-from mmdet.datasets.pipelines import to_tensor
+from mmdet.registry import TRANSFORMS as PIPELINES
+from mmcv.transforms import to_tensor
 
 @PIPELINES.register_module()
 class CollectData(object):

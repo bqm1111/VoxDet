@@ -3,7 +3,7 @@ import torch
 from mmcv.runner import force_fp32
 from torch.nn import functional as F
 
-from mmdet.models import DETECTORS
+from mmdet.registry import MODELS as DETECTORS
 from .voxelnet import VoxelNet
 
 

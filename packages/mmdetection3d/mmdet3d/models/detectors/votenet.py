@@ -2,7 +2,7 @@
 import torch
 
 from mmdet3d.core import bbox3d2result, merge_aug_bboxes_3d
-from mmdet.models import DETECTORS
+from mmdet.registry import MODELS as DETECTORS
 from .single_stage import SingleStage3DDetector
 
 

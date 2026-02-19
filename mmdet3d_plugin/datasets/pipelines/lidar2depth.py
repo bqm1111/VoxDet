@@ -1,7 +1,7 @@
 import os
 import torch
 import numpy as np
-from mmdet.datasets.builder import PIPELINES
+from mmdet.registry import TRANSFORMS as PIPELINES
 from .learning_map import learning_map
 
 @PIPELINES.register_module()

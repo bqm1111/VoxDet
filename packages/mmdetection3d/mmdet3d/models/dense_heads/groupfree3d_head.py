@@ -14,7 +14,7 @@ from mmdet3d.core.post_processing import aligned_3d_nms
 from mmdet3d.models.builder import build_loss
 from mmdet3d.ops import Points_Sampler, gather_points
 from mmdet.core import build_bbox_coder, multi_apply
-from mmdet.models import HEADS
+from mmdet.registry import MODELS as HEADS
 from .base_conv_bbox_head import BaseConvBboxHead
 
 EPS = 1e-6

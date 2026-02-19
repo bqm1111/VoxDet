@@ -11,7 +11,7 @@ from mmdet3d.core import (Box3DMode, Coord3DMode, bbox3d2result,
                           merge_aug_bboxes_3d, show_result)
 from mmdet3d.ops import Voxelization
 from mmdet.core import multi_apply
-from mmdet.models import DETECTORS
+from mmdet.registry import MODELS as DETECTORS
 from .. import builder
 from .base import Base3DDetector
 

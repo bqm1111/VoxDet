@@ -7,7 +7,7 @@ import torch
 from mmcv.utils import print_log
 from os import path as osp
 
-from mmdet.datasets import DATASETS
+from mmdet.registry import DATASETS
 from ..core.bbox import Box3DMode, CameraInstance3DBoxes, points_cam2img
 from .nuscenes_mono_dataset import NuScenesMonoDataset
 

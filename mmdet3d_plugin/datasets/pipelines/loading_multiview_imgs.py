@@ -3,7 +3,7 @@ import torch
 import numpy as np
 from PIL import Image
 from torchvision import transforms
-from mmdet.datasets.builder import PIPELINES
+from mmdet.registry import TRANSFORMS as PIPELINES
 from torchvision import transforms as TF
 
 # from vggt.utils.load_fn import load_and_preprocess_images

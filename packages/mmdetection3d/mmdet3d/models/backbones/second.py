@@ -1,10 +1,10 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import warnings
 from mmcv.cnn import build_conv_layer, build_norm_layer
-from mmcv.runner import BaseModule
+from mmengine.model import BaseModule
 from torch import nn as nn
 
-from mmdet.models import BACKBONES
+from mmdet.registry import MODELS as BACKBONES
 
 
 @BACKBONES.register_module()

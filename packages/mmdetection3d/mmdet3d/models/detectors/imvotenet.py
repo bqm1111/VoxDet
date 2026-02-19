@@ -5,7 +5,7 @@ import warnings
 
 from mmdet3d.core import bbox3d2result, merge_aug_bboxes_3d
 from mmdet3d.models.utils import MLP
-from mmdet.models import DETECTORS
+from mmdet.registry import MODELS as DETECTORS
 from .. import builder
 from .base import Base3DDetector
 

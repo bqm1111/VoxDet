@@ -16,10 +16,10 @@ import cv2 as cv
 import mmcv
 import copy
 import warnings
-from mmcv.cnn.bricks.registry import (ATTENTION, TRANSFORMER_LAYER, TRANSFORMER_LAYER_SEQUENCE)
+from mmdet.registry import MODELS as ATTENTION
+from mmdet.registry import MODELS as TRANSFORMER_LAYER
+from mmdet.registry import MODELS as TRANSFORMER_LAYER_SEQUENCE
 from mmcv.cnn.bricks.transformer import TransformerLayerSequence
-from mmcv.runner import force_fp32, auto_fp16
-from mmcv.utils import TORCH_VERSION, digit_version
 from mmcv.utils import ext_loader
 # from projects.mmdet3d_plugin.models.utils.visual import save_tensor
 from .custom_base_transformer_layer import MyCustomBaseTransformerLayer
@@ -100,7 +100,6 @@ class VoxFormerEncoder(TransformerLayerSequence):
             return ref_2d
 
     # This function must use fp32!!!
-    @force_fp32(apply_to=('reference_points', 'img_metas'))
     def point_sampling(self, reference_points, pc_range, cam_params, img_metas=None):
 
         rots, trans, intrins, post_rots, post_trans, bda = cam_params
@@ -165,7 +164,6 @@ class VoxFormerEncoder(TransformerLayerSequence):
         volume_mask = volume_mask.permute(2, 1, 3, 0, 4).squeeze(-1) # [D, B, num_cam, num_query, 1] -> [num_cam, B, num_query, D]
         return reference_points_cam, volume_mask
 
-    @auto_fp16()
     def forward(self,
                 bev_query,
                 key,

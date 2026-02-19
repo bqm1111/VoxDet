@@ -1,7 +1,8 @@
 import torch
 import numpy as np
 from PIL import Image
-from mmdet.datasets.builder import PIPELINES
+from mmdet.registry import TRANSFORMS as PIPELINES
+
 
 @PIPELINES.register_module()
 class LoadSemKittiAnnotation():

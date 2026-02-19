@@ -6,10 +6,13 @@ import torch.nn as nn
 import torch.utils.checkpoint as cp
 from timm.models import resnet
 from functools import partial
-from mmdet3d.models.builder import BACKBONES
-from mmcv.runner import BaseModule, Sequential
+from mmdet3d.registry import MODELS as BACKBONES
+from mmengine.model import BaseModule
+from torch.nn import Sequential
 from mmcv.cnn.bricks import ConvModule, DropPath
-from mmdet.models.utils import SELayer, make_divisible
+from mmdet.models.utils import make_divisible
+from mmdet.models.layers import SELayer
+
 
 class EdgeResidual(BaseModule):
     """Edge Residual Block.

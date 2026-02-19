@@ -24,7 +24,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from mmdet.models import DETECTORS
+from mmdet.registry import MODELS as DETECTORS
 from mmdet3d_plugin.models.detectors.VoxDet import VoxDet, compute_all_direction_distances
 from ...ov_voxdet.models.distiller import VoxDetDistiller3D, VoxDetDistiller2D, TextEmbeddingClassifier
 from ...ov_voxdet.losses.ovo_losses import OVVoxDetLoss

@@ -5,8 +5,8 @@ import cv2
 
 from scipy.spatial.transform import Rotation
 from torch.utils.data import Dataset, DataLoader
-from mmdet.datasets.pipelines import Compose
-from mmdet.datasets import DATASETS
+from mmengine.dataset import Compose
+from mmdet.registry import DATASETS
 from plyfile import PlyData
 import torch
 
