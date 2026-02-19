@@ -63,7 +63,7 @@ class VGGT(nn.Module, PyTorchModelHubMixin):
         aggregated_tokens_list, patch_start_idx = self.aggregator(images)
 
         predictions = {}
-
+        
         with torch.cuda.amp.autocast(enabled=False):
             if self.camera_head is not None:
                 pose_enc_list = self.camera_head(aggregated_tokens_list)
@@ -82,7 +82,7 @@ class VGGT(nn.Module, PyTorchModelHubMixin):
                 )
                 predictions["world_points"] = pts3d
                 predictions["world_points_conf"] = pts3d_conf
-
+        
         if self.track_head is not None and query_points is not None:
             track_list, vis, conf = self.track_head(
                 aggregated_tokens_list, images=images, patch_start_idx=patch_start_idx, query_points=query_points
@@ -92,5 +92,6 @@ class VGGT(nn.Module, PyTorchModelHubMixin):
             predictions["conf"] = conf
 
         predictions["images"] = images
-        
+
         return predictions
+    

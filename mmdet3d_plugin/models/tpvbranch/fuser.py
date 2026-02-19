@@ -32,18 +32,6 @@ class Fuser(BaseModule):
 
         return out_feats
 
-@BACKBONES.register_module()
-class Ident(BaseModule):
-    def __init__(self, embed_dims=128,
-                 global_aggregator=None,
-                 local_aggregator=None):
-        super().__init__()
-        self.local_aggregator = builder.build_backbone(local_aggregator)
-    
-    def forward(self, x):
-        local_feats = self.local_aggregator(x)
-
-        return local_feats
 
 
 @BACKBONES.register_module()

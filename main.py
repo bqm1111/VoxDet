@@ -20,7 +20,6 @@ def is_main_process():
         return True     
     return dist.get_rank() == 0
 
-
 def parse_config():
     parser = ArgumentParser()
     parser.add_argument('--config_path', default='./configs/semantic_kitti.py')
@@ -100,4 +99,3 @@ if __name__ == '__main__':
         )
         trainer.test(model=model, datamodule=data_dm, ckpt_path=config['ckpt_path'])    
 
-                

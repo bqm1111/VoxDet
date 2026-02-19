@@ -9,4 +9,5 @@ logs/
 prediction/
 vis/
 vis_compare/
+lang-seg
 ckpts/

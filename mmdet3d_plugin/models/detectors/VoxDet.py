@@ -74,7 +74,7 @@ class VoxDet(BaseModule):
         global_scale_filter_min=None,
     ):
         super().__init__()
-         
+        
         self.img_backbone = builder.build_backbone(img_backbone)
         self.img_neck = builder.build_neck(img_neck)
         self.global_scale_filter_min = global_scale_filter_min
@@ -86,7 +86,7 @@ class VoxDet(BaseModule):
         self.use_gt_refine = use_gt_refine
         self.car_scale_filter_max = car_scale_filter_max
         self.car_scale_filter_min = car_scale_filter_min
-
+        
         if occ_encoder_backbone is not None:
             self.occ_encoder_backbone = builder.build_backbone(occ_encoder_backbone)
         if occ_encoder_neck is not None:
@@ -173,7 +173,7 @@ class VoxDet(BaseModule):
             x = self.occ_encoder_neck(x)
 
         return x
-    
+
     def forward_train(self, data_dict):
         img_inputs = data_dict['img_inputs']
         img_metas = data_dict['img_metas']

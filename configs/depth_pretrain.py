@@ -48,7 +48,7 @@ bda_aug_conf = dict(
     flip_dy_ratio=0.5,
     flip_dz_ratio=0
 )
-
+# 
 data_config={
     'input_size': (384, 1280),
     # 'resize': (-0.06, 0.11),
