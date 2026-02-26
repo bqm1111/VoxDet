@@ -1,8 +1,8 @@
 import os
 import misc as misc
 import torch
-from mmengine.config import Config
-from mmdet3d_plugin import *
+from voxdet_core import Config
+from voxdet_models import *
 import pytorch_lightning as pl
 from argparse import ArgumentParser
 from LightningTools.pl_model import pl_model

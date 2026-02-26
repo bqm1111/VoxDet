@@ -4,9 +4,9 @@ import numpy as np
 import pytorch_lightning as pl
 from .basemodel import LightningBaseModel
 from .metric import SSCMetrics
-from mmdet3d.models import build_model
+from voxdet_core import build_model
 from .utils import get_inv_map
-from mmcv.runner.checkpoint import load_checkpoint
+from voxdet_core import load_checkpoint
 
 
 class pl_model(LightningBaseModel):

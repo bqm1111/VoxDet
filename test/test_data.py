@@ -1,4 +1,4 @@
-from mmdet3d_plugin import *
+from voxdet_models import *
 from torch.utils.data import DataLoader
 
 # dataset config #

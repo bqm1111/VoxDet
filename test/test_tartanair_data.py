@@ -1,6 +1,6 @@
 from configs.voxdet_tartanair_cam import *
 from torch.utils.data import DataLoader
-from mmdet3d_plugin.datasets.tartanair import TartanAirDataset
+from voxdet_models.datasets.tartanair import TartanAirDataset
 import torch
 
 dataset = TartanAirDataset(

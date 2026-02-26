@@ -1,5 +1,5 @@
 import pytorch_lightning as pl
-from mmdet.datasets import build_dataset
+from voxdet_core import build_dataset
 from torch.utils.data.dataloader import DataLoader
 
 class DataModule(pl.LightningDataModule):
