@@ -16,6 +16,7 @@ def bev_pool(feats, geom_feats, B, D, H, W):
     Returns:
         Tensor: BEV feature map of shape (B, C, D, H, W).
     """
+    B, D, H, W = int(B), int(D), int(H), int(W)
     C = feats.shape[1]
 
     # Compute linear indices

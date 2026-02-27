@@ -67,7 +67,7 @@ class pl_model(LightningBaseModel):
 
             self.val_metrics.add_batch(pred, gt_occ)
 
-    def validation_epoch_end(self, outputs):
+    def on_validation_epoch_end(self):
         metric_list = [("train", self.train_metrics), ("val", self.val_metrics)]
         # metric_list = [("val", self.val_metrics)]
         
@@ -77,13 +77,13 @@ class pl_model(LightningBaseModel):
         for prefix, metric in metrics_list:
             stats = metric.get_stats()
 
-            self.log("{}/mIoU".format(prefix), torch.tensor(stats["iou_ssc_mean"], dtype=torch.float32), sync_dist=True)
-            self.log("{}/IoU".format(prefix), torch.tensor(stats["iou"], dtype=torch.float32), sync_dist=True)
-            self.log("{}/Precision".format(prefix), torch.tensor(stats["precision"], dtype=torch.float32), sync_dist=True)
-            self.log("{}/Recall".format(prefix), torch.tensor(stats["recall"], dtype=torch.float32), sync_dist=True)
+            self.log("{}/mIoU".format(prefix), torch.tensor(stats["iou_ssc_mean"], dtype=torch.float32, device=self.device), sync_dist=True)
+            self.log("{}/IoU".format(prefix), torch.tensor(stats["iou"], dtype=torch.float32, device=self.device), sync_dist=True)
+            self.log("{}/Precision".format(prefix), torch.tensor(stats["precision"], dtype=torch.float32, device=self.device), sync_dist=True)
+            self.log("{}/Recall".format(prefix), torch.tensor(stats["recall"], dtype=torch.float32, device=self.device), sync_dist=True)
 
             for name, iou in zip(self.class_names, stats['iou_ssc']):
-                self.log("{}/IoU_{}".format(prefix,name), torch.tensor(iou, dtype=torch.float32), sync_dist=True)
+                self.log("{}/IoU_{}".format(prefix,name), torch.tensor(iou, dtype=torch.float32, device=self.device), sync_dist=True)
 
             metric.reset()
 
@@ -116,7 +116,7 @@ class pl_model(LightningBaseModel):
         if gt_occ is not None:
             self.test_metrics.add_batch(pred, gt_occ)
     
-    def test_epoch_end(self, outputs):
+    def on_test_epoch_end(self):
         metric_list = [("test", self.test_metrics)]
         print('---------------Val----------------')
         metrics_list = metric_list
@@ -137,12 +137,12 @@ class pl_model(LightningBaseModel):
             print('---------------FN----------------')
             for name, fn in zip(self.class_names, stats['fns_ssc']):
                 print(name + ":", fn)
-            self.log("{}/mIoU".format(prefix), torch.tensor(stats["iou_ssc_mean"], dtype=torch.float32), sync_dist=True)
-            self.log("{}/IoU".format(prefix), torch.tensor(stats["iou"], dtype=torch.float32), sync_dist=True)
-            self.log("{}/Precision".format(prefix), torch.tensor(stats["precision"], dtype=torch.float32), sync_dist=True)
-            self.log("{}/Recall".format(prefix), torch.tensor(stats["recall"], dtype=torch.float32), sync_dist=True)
+            self.log("{}/mIoU".format(prefix), torch.tensor(stats["iou_ssc_mean"], dtype=torch.float32, device=self.device), sync_dist=True)
+            self.log("{}/IoU".format(prefix), torch.tensor(stats["iou"], dtype=torch.float32, device=self.device), sync_dist=True)
+            self.log("{}/Precision".format(prefix), torch.tensor(stats["precision"], dtype=torch.float32, device=self.device), sync_dist=True)
+            self.log("{}/Recall".format(prefix), torch.tensor(stats["recall"], dtype=torch.float32, device=self.device), sync_dist=True)
 
             for name, iou in zip(self.class_names, stats['iou_ssc']):
-                self.log("{}/IoU_{}".format(prefix,name), torch.tensor(iou, dtype=torch.float32), sync_dist=True)
+                self.log("{}/IoU_{}".format(prefix,name), torch.tensor(iou, dtype=torch.float32, device=self.device), sync_dist=True)
             metric.reset()
 

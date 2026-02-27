@@ -4,7 +4,6 @@ import os
 import sys
 import tempfile
 
-
 class ConfigDict(dict):
     """A dictionary subclass that supports attribute-style access."""
 
@@ -25,12 +24,13 @@ class ConfigDict(dict):
             del self[name]
         except KeyError:
             raise AttributeError(f"'ConfigDict' object has no attribute '{name}'")
-
+    
     def __deepcopy__(self, memo):
         new = ConfigDict()
         for key, value in self.items():
             new[copy.deepcopy(key, memo)] = copy.deepcopy(value, memo)
         return new
+
 
     def copy(self):
         return copy.copy(self)

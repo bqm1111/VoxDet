@@ -1,4 +1,4 @@
-Metadata-Version: 2.4
+Metadata-Version: 2.1
 Name: mmdet3d
 Version: 0.17.1
 Summary: OpenMMLab's next-generation platformfor general 3D object detection.
@@ -7,6 +7,7 @@ Author: MMDetection3D Contributors
 Author-email: zwwdev@gmail.com
 License: Apache License 2.0
 Keywords: computer vision,3D object detection
+Platform: UNKNOWN
 Classifier: Development Status :: 4 - Beta
 Classifier: License :: OSI Approved :: Apache Software License
 Classifier: Operating System :: OS Independent
@@ -14,69 +15,11 @@ Classifier: Programming Language :: Python :: 3
 Classifier: Programming Language :: Python :: 3.6
 Classifier: Programming Language :: Python :: 3.7
 Description-Content-Type: text/markdown
-License-File: LICENSE
-Requires-Dist: lyft_dataset_sdk
-Requires-Dist: networkx<2.3,>=2.2
-Requires-Dist: numba==0.48.0
-Requires-Dist: numpy<1.20.0
-Requires-Dist: nuscenes-devkit
-Requires-Dist: plyfile
-Requires-Dist: scikit-image
-Requires-Dist: tensorboard
-Requires-Dist: trimesh<2.35.40,>=2.35.39
 Provides-Extra: all
-Requires-Dist: open3d; extra == "all"
-Requires-Dist: waymo-open-dataset-tf-2-1-0==1.2.0; extra == "all"
-Requires-Dist: lyft_dataset_sdk; extra == "all"
-Requires-Dist: networkx<2.3,>=2.2; extra == "all"
-Requires-Dist: numba==0.48.0; extra == "all"
-Requires-Dist: numpy<1.20.0; extra == "all"
-Requires-Dist: nuscenes-devkit; extra == "all"
-Requires-Dist: plyfile; extra == "all"
-Requires-Dist: scikit-image; extra == "all"
-Requires-Dist: tensorboard; extra == "all"
-Requires-Dist: trimesh<2.35.40,>=2.35.39; extra == "all"
-Requires-Dist: asynctest; extra == "all"
-Requires-Dist: codecov; extra == "all"
-Requires-Dist: flake8; extra == "all"
-Requires-Dist: interrogate; extra == "all"
-Requires-Dist: isort; extra == "all"
-Requires-Dist: kwarray; extra == "all"
-Requires-Dist: pytest; extra == "all"
-Requires-Dist: pytest-cov; extra == "all"
-Requires-Dist: pytest-runner; extra == "all"
-Requires-Dist: ubelt; extra == "all"
-Requires-Dist: xdoctest>=0.10.0; extra == "all"
-Requires-Dist: yapf; extra == "all"
 Provides-Extra: tests
-Requires-Dist: asynctest; extra == "tests"
-Requires-Dist: codecov; extra == "tests"
-Requires-Dist: flake8; extra == "tests"
-Requires-Dist: interrogate; extra == "tests"
-Requires-Dist: isort; extra == "tests"
-Requires-Dist: kwarray; extra == "tests"
-Requires-Dist: pytest; extra == "tests"
-Requires-Dist: pytest-cov; extra == "tests"
-Requires-Dist: pytest-runner; extra == "tests"
-Requires-Dist: ubelt; extra == "tests"
-Requires-Dist: xdoctest>=0.10.0; extra == "tests"
-Requires-Dist: yapf; extra == "tests"
 Provides-Extra: build
 Provides-Extra: optional
-Requires-Dist: open3d; extra == "optional"
-Requires-Dist: waymo-open-dataset-tf-2-1-0==1.2.0; extra == "optional"
-Dynamic: author
-Dynamic: author-email
-Dynamic: classifier
-Dynamic: description
-Dynamic: description-content-type
-Dynamic: home-page
-Dynamic: keywords
-Dynamic: license
-Dynamic: license-file
-Dynamic: provides-extra
-Dynamic: requires-dist
-Dynamic: summary
+License-File: LICENSE
 
 <div align="center">
   <img src="resources/mmdet3d-logo.png" width="600"/>
@@ -253,3 +196,5 @@ We wish that the toolbox and benchmark could serve the growing research communit
 - [MMEditing](https://github.com/open-mmlab/mmediting): OpenMMLab image and video editing toolbox.
 - [MMOCR](https://github.com/open-mmlab/mmocr): OpenMMLab text detection, recognition and understanding toolbox.
 - [MMGeneration](https://github.com/open-mmlab/mmgeneration): OpenMMLab image and video generative models toolbox.
+
+

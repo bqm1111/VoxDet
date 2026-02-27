@@ -175,7 +175,7 @@ testset_config = dict(
 
 data = dict(train=trainset_config, val=testset_config, test=testset_config)
 
-train_dataloader_config = dict(batch_size=1, num_workers=4)
+train_dataloader_config = dict(batch_size=2, num_workers=4)
 
 test_dataloader_config = dict(batch_size=1, num_workers=4)
 

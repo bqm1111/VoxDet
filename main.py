@@ -25,7 +25,7 @@ def parse_config():
     parser.add_argument('--config_path', default='./configs/semantic_kitti.py')
     parser.add_argument('--ckpt_path', default=None)
     parser.add_argument('--seed', type=int, default=7240, help='random seed point')
-    parser.add_argument('--log_folder', default='semantic_kitti')
+    parser.add_argument('--log_folder', default='logs/semantic_kitti')
     parser.add_argument('--save_path', default=None)
     parser.add_argument('--test_mapping', action='store_true')
     parser.add_argument('--submit', action='store_true')
@@ -57,16 +57,22 @@ if __name__ == '__main__':
     seed = config.seed
     pl.seed_everything(seed)
     num_gpu = torch.cuda.device_count()
+    num_gpu = 1
     model = pl_model(config)
 
     data_dm = DataModule(config)
+    data_dm.setup()
+    # for i, data in enumerate(data_dm.train_dataloader()):
+    #     print(data['img_metas'])
+    #     break
 
     checkpoint_callback = ModelCheckpoint(
         monitor='val/mIoU',
         mode='max',
         save_last=True,
         filename='best')
-
+    print("Is gpu available: ", torch.cuda.is_available())
+    
     if not config.eval:
         trainer = pl.Trainer(
             devices=[i for i in range(num_gpu)],
@@ -75,7 +81,6 @@ if __name__ == '__main__':
                 find_unused_parameters=False
             ),
             max_steps=config.training_steps,
-            resume_from_checkpoint=None,
             callbacks=[
                 checkpoint_callback,
                 LearningRateMonitor(logging_interval='step')
@@ -88,6 +93,9 @@ if __name__ == '__main__':
         )
         trainer.fit(model=model, datamodule=data_dm)
     else:
+        if config['ckpt_path']:
+            from voxdet_core import load_checkpoint
+            load_checkpoint(model.model, config['ckpt_path'], map_location='cpu')
         trainer = pl.Trainer(
             devices=[i for i in range(num_gpu)],
             strategy=DDPStrategy(
@@ -97,5 +105,6 @@ if __name__ == '__main__':
             logger=tb_logger,
             profiler=profiler
         )
-        trainer.test(model=model, datamodule=data_dm, ckpt_path=config['ckpt_path'])    
-
+        trainer.test(model=model, datamodule=data_dm)    
+        
+        
