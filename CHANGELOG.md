@@ -272,6 +272,49 @@ batch_idx = geom_feats[:, 3].long()  # batch → B
 
 ---
 
+### CUDA Kernel Restoration
+
+#### 10. Restored CUDA `bev_pool` kernel for 4.7x speedup over pure-PyTorch
+**Files:** `voxdet_core/ops/bev_pool.py`, `voxdet_core/ops/csrc/bev_pool_cuda.cu`, `voxdet_core/ops/csrc/bev_pool.cpp`, `voxdet_core/ops/setup_bev_pool.py`
+**Impact:** HIGH (training and inference throughput)
+
+The refactoring replaced the original mmdetection3d CUDA `bev_pool` kernel with a
+pure-PyTorch `scatter_add` implementation. While functionally correct (after fix #9),
+the PyTorch path is significantly slower due to:
+
+1. **No pre-sorting or interval compression.** The CUDA kernel pre-sorts points by
+   their voxel rank and computes contiguous intervals, then uses a fused kernel that
+   sums each interval in a single thread. The PyTorch path uses `scatter_add_` which
+   must handle arbitrary index patterns.
+
+2. **Extra memory traffic.** The PyTorch path materializes a boolean validity mask,
+   applies it to filter indices, expands the linear index tensor to `(N, C)` via
+   `unsqueeze + expand`, and writes to a flat `(B*D*H*W, C)` buffer before reshaping.
+   The CUDA kernel writes directly to the `(B, D, H, W, C)` output.
+
+**Benchmark** (N=200k points, C=64 channels, grid 1x32x128x128):
+- CUDA kernel: **3.6 ms**
+- PyTorch scatter_add: **17.0 ms**
+- Speedup: **4.7x**
+
+**Implementation:**
+- Restored the original CUDA kernel (`bev_pool_cuda.cu`) and C++ pybind wrapper
+  (`bev_pool.cpp`) from git history (commit `7193d05`)
+- Added `setup_bev_pool.py` for pre-compilation:
+  `python voxdet_core/ops/setup_bev_pool.py build_ext --inplace`
+- Updated `bev_pool.py` with a three-tier import strategy:
+  1. Pre-compiled `.so` in `voxdet_core/ops/` (instant load)
+  2. JIT compilation via `torch.utils.cpp_extension.load`
+  3. Pure-PyTorch `scatter_add` fallback if CUDA is unavailable
+- Both forward and backward passes verified correct (exact match with PyTorch path)
+
+**Other CUDA ops assessed:**
+- `ms_deform_attn` (2D multi-scale deformable attention): Pure-PyTorch replacement
+  exists but is **never called** — the config exclusively uses the DFA3D variant
+  which still uses its own CUDA kernels (`dfa3D._ext`). No action needed.
+
+---
+
 ### Summary of files modified
 
 | File | Change type |
@@ -286,4 +329,7 @@ batch_idx = geom_feats[:, 3].long()  # batch → B
 | `LightningTools/pl_model.py` | Perf: reduce train metric frequency, disable sync_dist |
 | `configs/voxdet-semantickitti-cam.py` | Perf: increase num_workers |
 | `voxdet_models/datasets/pipelines/loading_multiview_imgs.py` | Cleanup: remove unused vggt import |
-| `voxdet_core/ops/bev_pool.py` | Bug fix: correct column ordering to match CUDA kernel |
+| `voxdet_core/ops/bev_pool.py` | Bug fix: correct column ordering; CUDA kernel with PyTorch fallback |
+| `voxdet_core/ops/csrc/bev_pool_cuda.cu` | Restored: CUDA bev_pool kernel (from mmdetection3d) |
+| `voxdet_core/ops/csrc/bev_pool.cpp` | Restored: C++ pybind wrapper for CUDA kernel |
+| `voxdet_core/ops/setup_bev_pool.py` | New: build script for pre-compiling CUDA extension |
