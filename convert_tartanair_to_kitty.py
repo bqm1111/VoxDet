@@ -250,9 +250,8 @@ def main():
         m = re.search(r"(\d+)", p.name)
         return int(m.group(1)) if m else -1
     color_files.sort(key=index_key); depth_files.sort(key=index_key); seg_files.sort(key=index_key)
-    
-    label_map = load_label_map(args.label_map)
 
+    label_map = load_label_map(args.label_map)
     # timestamps
     if args.timestamps:
         ts = [float(x.strip()) for x in Path(args.timestamps).read_text().splitlines() if x.strip()]

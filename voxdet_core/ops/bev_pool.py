@@ -4,14 +4,26 @@ import torch
 def bev_pool(feats, geom_feats, B, D, H, W):
     """Pure-PyTorch BEV pooling using scatter_add.
 
+    Drop-in replacement for the CUDA bev_pool kernel from mmdetection3d.
+    The CUDA kernel uses a non-standard column ordering for geom_feats:
+
+        column 0 → H dimension (x-axis / height in output)
+        column 1 → W dimension (y-axis / width in output)
+        column 2 → D dimension (z-axis / depth in output)
+        column 3 → B dimension (batch index)
+
+    This matches the caller convention in LSSViewTransformer.voxel_pooling,
+    which constructs geom_feats as [x, y, z, batch_ix].
+
     Args:
         feats (Tensor): Feature tensor of shape (N, C).
         geom_feats (Tensor): Geometry indices of shape (N, 4) where columns
-            are (batch_idx, depth_idx, height_idx, width_idx).
+            are (x/H_idx, y/W_idx, z/D_idx, batch_idx) — matching the
+            original CUDA kernel convention.
         B (int): Batch size.
-        D (int): Depth dimension.
-        H (int): Height dimension.
-        W (int): Width dimension.
+        D (int): Depth dimension (z-axis).
+        H (int): Height dimension (x-axis).
+        W (int): Width dimension (y-axis).
 
     Returns:
         Tensor: BEV feature map of shape (B, C, D, H, W).
@@ -19,11 +31,12 @@ def bev_pool(feats, geom_feats, B, D, H, W):
     B, D, H, W = int(B), int(D), int(H), int(W)
     C = feats.shape[1]
 
-    # Compute linear indices
-    batch_idx = geom_feats[:, 0].long()
-    d_idx = geom_feats[:, 1].long()
-    h_idx = geom_feats[:, 2].long()
-    w_idx = geom_feats[:, 3].long()
+    # Match the CUDA kernel's non-standard column ordering:
+    #   col 0 -> H (x), col 1 -> W (y), col 2 -> D (z), col 3 -> B (batch)
+    h_idx = geom_feats[:, 0].long()
+    w_idx = geom_feats[:, 1].long()
+    d_idx = geom_feats[:, 2].long()
+    batch_idx = geom_feats[:, 3].long()
 
     # Filter valid indices
     valid = ((batch_idx >= 0) & (batch_idx < B) &

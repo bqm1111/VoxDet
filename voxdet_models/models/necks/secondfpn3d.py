@@ -3,6 +3,7 @@ import numpy as np
 import torch
 from voxdet_core import build_conv_layer, build_norm_layer, build_upsample_layer
 from voxdet_core import BaseModule, auto_fp16
+from voxdet_core.init_utils import kaiming_init
 from torch import nn as nn
 
 from voxdet_core import NECKS
@@ -89,9 +90,14 @@ class SECONDFPN3D(BaseModule):
 
         if init_cfg is None:
             self.init_cfg = [
-                dict(type='Kaiming', layer='ConvTranspose2d'),
+                dict(type='Kaiming', layer='ConvTranspose3d'),
                 dict(type='Constant', layer='NaiveSyncBatchNorm2d', val=1.0)
             ]
+
+        # Explicit Kaiming init for ConvTranspose layers (replaces init_cfg)
+        for m in self.modules():
+            if isinstance(m, (nn.ConvTranspose2d, nn.ConvTranspose3d)):
+                kaiming_init(m)
 
     @auto_fp16()
     def forward(self, x):

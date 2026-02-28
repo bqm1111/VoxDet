@@ -224,7 +224,7 @@ class OVVoxDet(VoxDet):
                 )
             for key in losses_aux:
                 losses[key.replace('loss', 'loss_aux')] = losses_aux[key]
-        
+
         # Depth loss
         if self.depth_loss and depth is not None:
             losses['loss_depth'] = self.depth_net.get_depth_loss(
@@ -268,7 +268,7 @@ class OVVoxDet(VoxDet):
             
             # Text embeddings for L_vox_txt
             text_emb = getattr(self, '_text_embeddings', None)
-            
+
             # Valid mask: non-empty, non-ignored voxels
             valid_mask = (gt_occ != 0) & (gt_occ != 255)
             

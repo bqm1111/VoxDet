@@ -23,28 +23,37 @@ class DataModule(pl.LightningDataModule):
         self.val_dataset = build_dataset(self.valset_config)
     
     def train_dataloader(self):
+        num_workers = self.train_dataloader_config.num_workers
         return DataLoader(
             self.train_dataset,
             batch_size=self.train_dataloader_config.batch_size,
             drop_last=True,
-            num_workers=self.train_dataloader_config.num_workers,
+            num_workers=num_workers,
             shuffle=True,
-            pin_memory=True)
-    
+            pin_memory=True,
+            persistent_workers=num_workers > 0,
+            prefetch_factor=4 if num_workers > 0 else None)
+
     def val_dataloader(self):
+        num_workers = self.val_dataloader_config.num_workers
         return DataLoader(
             self.val_dataset,
             batch_size=self.val_dataloader_config.batch_size,
             drop_last=False,
-            num_workers=self.val_dataloader_config.num_workers,
+            num_workers=num_workers,
             shuffle=False,
-            pin_memory=True)
-    
+            pin_memory=True,
+            persistent_workers=num_workers > 0,
+            prefetch_factor=4 if num_workers > 0 else None)
+
     def test_dataloader(self):
+        num_workers = self.test_dataloader_config.num_workers
         return DataLoader(
             self.test_dataset,
             batch_size=self.test_dataloader_config.batch_size,
             drop_last=False,
-            num_workers=self.test_dataloader_config.num_workers,
+            num_workers=num_workers,
             shuffle=False,
-            pin_memory=True)
+            pin_memory=True,
+            persistent_workers=num_workers > 0,
+            prefetch_factor=4 if num_workers > 0 else None)

@@ -62,9 +62,6 @@ if __name__ == '__main__':
 
     data_dm = DataModule(config)
     data_dm.setup()
-    # for i, data in enumerate(data_dm.train_dataloader()):
-    #     print(data['img_metas'])
-    #     break
 
     checkpoint_callback = ModelCheckpoint(
         monitor='val/mIoU',

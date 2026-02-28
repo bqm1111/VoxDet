@@ -17,7 +17,7 @@ from .cnn_builders import (
     SELayer, make_divisible, DropPath,
 )
 from .transformer_builders import TransformerLayerSequence, FFN
-from .init_utils import xavier_init, constant_init, trunc_normal_, trunc_normal_init
+from .init_utils import xavier_init, constant_init, kaiming_init, trunc_normal_, trunc_normal_init
 from .fp_utils import force_fp32, auto_fp16
 from .misc import deprecated_api_warning, to_2tuple
 from .checkpoint import load_checkpoint, CheckpointLoader

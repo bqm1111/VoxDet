@@ -5,10 +5,6 @@ from torchvision import transforms
 from voxdet_core import PIPELINES
 from torchvision import transforms as TF
 
-# from vggt.utils.load_fn import load_and_preprocess_images
-from torchvision import transforms as TF
-from vggt.utils.load_fn import load_and_preprocess_images
-
 @PIPELINES.register_module()
 class LoadMultiViewImageFromFiles(object):
     """Load multi channel images from a list of separate channel files.

@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from torch.nn.init import kaiming_normal_, constant_
 from torchvision.ops import DeformConv2d
 
 
@@ -230,28 +231,18 @@ class ConvModule(nn.Module):
         self.with_bias = bias
 
         # Build conv
-        conv_cfg = conv_cfg or {}
-        conv_cfg_copy = conv_cfg.copy()
-        conv_cfg_copy.pop('type', None)
-        self.conv = build_conv_layer(
-            conv_cfg,
-            in_channels,
-            out_channels,
-            kernel_size,
-            stride=stride,
-            padding=padding,
-            dilation=dilation,
-            groups=groups,
-            bias=bias,
-            **conv_cfg_copy if not conv_cfg else {})
-
-        # Rebuild conv properly
         conv_type = (conv_cfg or {}).get('type', 'Conv2d')
         conv_cls = CONV_LAYERS.get(conv_type, nn.Conv2d)
         self.conv = conv_cls(
             in_channels, out_channels, kernel_size,
             stride=stride, padding=padding, dilation=dilation,
             groups=groups, bias=bias)
+
+        # Kaiming normal (fan_out) init to match mmcv's ConvModule
+        if hasattr(self.conv, 'weight') and self.conv.weight is not None:
+            kaiming_normal_(self.conv.weight, a=0, mode='fan_out', nonlinearity='relu')
+        if hasattr(self.conv, 'bias') and self.conv.bias is not None:
+            constant_(self.conv.bias, 0)
 
         # Build norm
         if self.with_norm:

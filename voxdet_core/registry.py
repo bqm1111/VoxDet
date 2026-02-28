@@ -1,7 +1,6 @@
 import copy
 import inspect
 
-
 class Registry:
     """A registry to map strings to classes."""
 

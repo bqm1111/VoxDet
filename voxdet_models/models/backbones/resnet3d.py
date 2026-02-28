@@ -78,7 +78,7 @@ class BasicBlock(BaseModule):
             out = self.norm2(out)
 
             if self.drop_path is not None:
-                x = self.drop_path(x)
+                out = self.drop_path(out)
 
             if self.downsample is not None:
                 identity = self.downsample(x)

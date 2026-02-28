@@ -11,7 +11,7 @@
 # ---------------------------------------------
 
 import torch
-from torch.cuda.amp import custom_bwd, custom_fwd
+from torch.amp import custom_bwd, custom_fwd
 from torch.autograd.function import Function, once_differentiable
 # from mmcv.utils import ext_loader
 # ext_module = ext_loader.load_ext(
@@ -24,7 +24,7 @@ ext_module = ext_loader.load_ext(
 class WeightedMultiScaleDeformableAttnFunction_fp16(Function):
 
     @staticmethod
-    @custom_fwd(cast_inputs=torch.float16)
+    @custom_fwd(cast_inputs=torch.float16, device_type='cuda')
     def forward(ctx, value, value_spatial_shapes, value_level_start_index,
                 sampling_locations, attention_weights, depth_score, im2col_step):
         """GPU version of multi-scale deformable attention.
@@ -63,7 +63,7 @@ class WeightedMultiScaleDeformableAttnFunction_fp16(Function):
 
     @staticmethod
     @once_differentiable
-    @custom_bwd
+    @custom_bwd(device_type='cuda')
     def backward(ctx, grad_output):
         """GPU version of backward function.
 
@@ -102,7 +102,7 @@ class WeightedMultiScaleDeformableAttnFunction_fp16(Function):
 class WeightedMultiScaleDeformableAttnFunction_fp32(Function):
 
     @staticmethod
-    @custom_fwd(cast_inputs=torch.float32)
+    @custom_fwd(cast_inputs=torch.float32, device_type='cuda')
     def forward(ctx, value, value_spatial_shapes, value_level_start_index,
                 sampling_locations, attention_weights, depth_score, im2col_step):
         """GPU version of multi-scale deformable attention.
@@ -142,7 +142,7 @@ class WeightedMultiScaleDeformableAttnFunction_fp32(Function):
 
     @staticmethod
     @once_differentiable
-    @custom_bwd
+    @custom_bwd(device_type='cuda')
     def backward(ctx, grad_output):
         """GPU version of backward function.
 
@@ -180,7 +180,7 @@ class WeightedMultiScaleDeformableAttnFunction_fp32(Function):
 
 class MultiScaleDepthScoreSampleFunction_fp16(Function):
     @staticmethod
-    @custom_fwd(cast_inputs=torch.float16)
+    @custom_fwd(cast_inputs=torch.float16, device_type='cuda')
     def forward(ctx, value: torch.Tensor, value_spatial_shapes: torch.Tensor,
                 value_level_start_index: torch.Tensor,
                 sampling_locations: torch.Tensor,
@@ -227,7 +227,7 @@ class MultiScaleDepthScoreSampleFunction_fp16(Function):
 
 class MultiScaleDepthScoreSampleFunction_fp32(Function):
     @staticmethod
-    @custom_fwd(cast_inputs=torch.float32)
+    @custom_fwd(cast_inputs=torch.float32, device_type='cuda')
     def forward(ctx, value: torch.Tensor, value_spatial_shapes: torch.Tensor,
                 value_level_start_index: torch.Tensor,
                 sampling_locations: torch.Tensor,
@@ -274,7 +274,7 @@ class MultiScaleDepthScoreSampleFunction_fp32(Function):
 
 class MultiScale3DDeformableAttnFunction_fp32(Function):
     @staticmethod
-    @custom_fwd(cast_inputs=torch.float32)
+    @custom_fwd(cast_inputs=torch.float32, device_type='cuda')
     def forward(ctx, value: torch.Tensor, value_dpt_dist: torch.Tensor, value_spatial_shapes: torch.Tensor,
                 value_level_start_index: torch.Tensor,
                 sampling_locations: torch.Tensor,
@@ -352,7 +352,7 @@ class MultiScale3DDeformableAttnFunction_fp32(Function):
 
 class MultiScale3DDeformableAttnFunction_fp16(Function):
     @staticmethod
-    @custom_fwd(cast_inputs=torch.float16)
+    @custom_fwd(cast_inputs=torch.float16, device_type='cuda')
     def forward(ctx, value: torch.Tensor, value_dpt_dist: torch.Tensor, value_spatial_shapes: torch.Tensor,
                 value_level_start_index: torch.Tensor,
                 sampling_locations: torch.Tensor,

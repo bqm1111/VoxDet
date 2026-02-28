@@ -200,3 +200,4 @@ class NeighborhoodCrossAttention2D(nn.Module):
             + f"kernel_size={self.kernel_size}, dilation={self.dilation}, "
             + f"rel_pos_bias={self.rpb is not None}"
         )
+

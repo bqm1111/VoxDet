@@ -42,18 +42,21 @@ class pl_model(LightningBaseModel):
                 "train/"+key,
                 value.detach(),
                 on_epoch=True,
-                sync_dist=True)
+                sync_dist=False)
             loss += value
-            
+
         self.log("train/loss",
             loss.detach(),
             on_epoch=True,
-            sync_dist=True)
-        
-        if not self.pretrain:
+            sync_dist=False)
+
+        # Compute train metrics only every 100 steps to avoid GPU stalls.
+        # .cpu().numpy() forces a CUDA sync and the metric computation is
+        # expensive (per-class np.where over 2M-element arrays).
+        if not self.pretrain and (batch_idx % 100 == 0):
             pred = output_dict['pred'].detach().cpu().numpy()
             gt_occ = output_dict['gt_occ'].detach().cpu().numpy()
-            
+
             self.train_metrics.add_batch(pred, gt_occ)
 
         return loss

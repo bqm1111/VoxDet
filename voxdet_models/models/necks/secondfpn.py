@@ -8,6 +8,7 @@ from torch import nn as nn
 from voxdet_core.cnn_builders import build_conv_layer, build_norm_layer, build_upsample_layer
 from voxdet_core.base_module import BaseModule
 from voxdet_core.fp_utils import auto_fp16
+from voxdet_core.init_utils import kaiming_init
 from voxdet_core.registry import NECKS
 
 
@@ -65,6 +66,11 @@ class SECONDFPN(BaseModule):
                                     nn.ReLU(inplace=True))
             deblocks.append(deblock)
         self.deblocks = nn.ModuleList(deblocks)
+
+        # Explicit Kaiming init for ConvTranspose layers (replaces init_cfg)
+        for m in self.modules():
+            if isinstance(m, (nn.ConvTranspose2d, nn.ConvTranspose3d)):
+                kaiming_init(m)
 
     @auto_fp16()
     def forward(self, x):
