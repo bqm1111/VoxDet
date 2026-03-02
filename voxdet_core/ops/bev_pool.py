@@ -185,3 +185,4 @@ def bev_pool(feats, geom_feats, B, D, H, W):
         return _bev_pool_cuda(feats, geom_feats, B, D, H, W)
     else:
         return _bev_pool_pytorch(feats, geom_feats, B, D, H, W)
+

@@ -61,6 +61,33 @@ class pl_model(LightningBaseModel):
 
         return loss
 
+    def on_before_optimizer_step(self, optimizer, *args, **kwargs):
+        """Log gradient norms to detect exploding/vanishing gradients."""
+        if self.global_step % self.trainer.log_every_n_steps != 0:
+            return
+
+        # Accumulate on GPU — only one .item() call at the very end
+        device = next(self.model.parameters()).device
+        total_sq = torch.zeros(1, device=device)
+        module_sq = {}
+        for name, module in self.model.named_children():
+            msq = torch.zeros(1, device=device)
+            for p in module.parameters():
+                if p.grad is not None:
+                    msq += p.grad.data.float().pow(2).sum()
+            module_sq[name] = msq
+            total_sq += msq
+
+        # Single CUDA sync: move all norms to CPU at once
+        keys = list(module_sq.keys())
+        all_sq = torch.cat([total_sq] + [module_sq[k] for k in keys])
+        all_norms = all_sq.sqrt().cpu()
+
+        self.log("grad/total_norm", all_norms[0].item(), on_step=True, on_epoch=False)
+        for i, name in enumerate(keys):
+            if all_norms[i + 1] > 0:
+                self.log(f"grad/{name}", all_norms[i + 1].item(), on_step=True, on_epoch=False)
+
     def validation_step(self, batch, batch_idx):
         output_dict = self.forward(batch)
         

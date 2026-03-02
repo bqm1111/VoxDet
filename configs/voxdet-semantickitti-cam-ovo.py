@@ -5,7 +5,7 @@ camera_used = ["left"]
 
 # OV-VoxDet: LSeg and CLIP preprocessing paths
 lseg_feat_root = "data/kitti/dataset/lseg_features/"
-text_embedding_path = "data/kitti/dataset/prompt_embedding/semantickitti_text_embeddings.json"
+text_embedding_path = "data/kitti/dataset/prompt_embedding/text_embeddings.pt"
 
 dataset_type = "SemanticKITTIDataset"
 point_cloud_range = [0, -25.6, -2, 51.2, 25.6, 4.4]
@@ -186,7 +186,8 @@ testset_config = dict(
 
 data = dict(train=trainset_config, val=testset_config, test=testset_config)
 
-train_dataloader_config = dict(batch_size=1, num_workers=4)
+train_dataloader_config = dict(batch_size=4, num_workers=32)
+accumulate_grad_batches = 2  # effective batch_size = 2 * 2 = 4
 
 test_dataloader_config = dict(batch_size=1, num_workers=4)
 
@@ -385,7 +386,7 @@ model = dict(
     # OV-VoxDet: OVO distillation config
     ov_config=dict(
         cls_feat_channels=_dim_,
-        img_feat_channels=_dim_,
+        img_feat_channels=512,  # SECONDFPN concatenates 4x128=512 channels
         embedding_dim=512,
         text_embedding_path=text_embedding_path,
         base_class_indices=base_class_indices,

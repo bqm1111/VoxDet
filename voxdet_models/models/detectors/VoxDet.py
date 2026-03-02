@@ -5,30 +5,30 @@ from voxdet_core import build_from_cfg
 import torch.nn.functional as F
 
 def run_length_positive(t, dim):
-    shape = t.shape
-    L = shape[dim]
-    out = torch.empty_like(t, dtype=torch.int32)
-    
-    idx_last = [slice(None)] * len(shape)
-    idx_last[dim] = -1
-    out[tuple(idx_last)] = torch.tensor(1, dtype=torch.int32, device=t.device)
-    
-    for i in range(L - 2, -1, -1):
-        idx = [slice(None)] * len(shape)
-        idx[dim] = i
-        idx_next = [slice(None)] * len(shape)
-        idx_next[dim] = i + 1
-        
-        current = t[tuple(idx)]
-        nxt = t[tuple(idx_next)]
-        
-        cond = (current == nxt)
-        out_next = out[tuple(idx_next)]
-        
-        val = torch.where(cond, out_next + 1, torch.tensor(1, dtype=torch.int32, device=t.device))
-        out[tuple(idx)] = val
-        
-    return out
+    """Vectorized run-length encoding along a dimension.
+
+    For each position, counts how many consecutive equal values follow it
+    (including itself). Uses cumsum + cummax reset trick: O(L) parallel work,
+    no Python-level loops.
+    """
+    t_moved = t.movedim(dim, -1)  # [..., L]
+
+    # boundary[i] = True means position i is the LAST in its forward run
+    boundary = torch.ones_like(t_moved, dtype=torch.bool)
+    boundary[..., :-1] = (t_moved[..., :-1] != t_moved[..., 1:])
+
+    # Reverse: boundary_rev marks segment STARTs in the reversed order
+    boundary_rev = boundary.flip(-1)
+
+    # Cumsum of 1s gives global position; reset at segment starts via cummax
+    ones = torch.ones_like(t_moved, dtype=torch.int32)
+    cum = ones.cumsum(-1)  # 1, 2, 3, ...
+    reset = torch.where(boundary_rev, cum - 1, torch.zeros_like(cum))
+    reset_cummax = reset.cummax(-1)[0]
+    result = cum - reset_cummax  # 1-based run length within each segment
+
+    return result.flip(-1).movedim(-1, dim)
+
 
 def run_length_along_dim(t, dim, direction):
     if direction == 'positive':
@@ -47,7 +47,7 @@ def compute_all_direction_distances(gt_occ):
     dist_y_neg = run_length_along_dim(gt_occ, 2, 'negative')
     dist_z_pos = run_length_along_dim(gt_occ, 3, 'positive')
     dist_z_neg = run_length_along_dim(gt_occ, 3, 'negative')
-    
+
     distances = torch.stack([dist_x_pos, dist_x_neg, dist_y_pos, dist_y_neg, dist_z_pos, dist_z_neg], dim=1)
     return distances
 

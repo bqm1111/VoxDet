@@ -67,6 +67,9 @@ class VoxFormerHead(nn.Module):
             self.mlp_prior = None
             self.mask_embed = nn.Embedding(1, self.embed_dims)
 
+        # Cache positional encoding (same zeros input every forward call)
+        self._cached_bev_pos = None
+
     def get_voxel_indices(self):
         xv, yv, zv = torch.meshgrid(
             torch.arange(self.volume_h), torch.arange(self.volume_w),torch.arange(self.volume_z), 
@@ -116,9 +119,14 @@ class VoxFormerHead(nn.Module):
 
         if proposal.sum() < 2:
             proposal = torch.ones_like(proposal)
-        # Generate bev postional embeddings for cross and self attention
-        bev_pos_cross_attn = self.positional_encoding(torch.zeros((bs, 512, 512), device=volume_queries.device).to(dtype)).to(dtype) # [1, dim, 128*4, 128*4]
-        bev_pos_self_attn = self.positional_encoding(torch.zeros((bs, 512, 512), device=volume_queries.device).to(dtype)).to(dtype) # [1, dim, 128*4, 128*4]
+        # Generate bev positional embeddings (cached since input is always zeros)
+        if self._cached_bev_pos is None or self._cached_bev_pos.device != volume_queries.device:
+            _bev_pos = self.positional_encoding(
+                torch.zeros((1, 512, 512), device=volume_queries.device, dtype=dtype)
+            ).to(dtype)
+            self._cached_bev_pos = _bev_pos
+        bev_pos_cross_attn = self._cached_bev_pos
+        bev_pos_self_attn = self._cached_bev_pos
 
         vox_coords, ref_3d = self.vox_coords.clone(), self.ref_3d.clone()
         # proposal = torch.zeros([bs, self.volume_h, self.volume_w, self.volume_z])

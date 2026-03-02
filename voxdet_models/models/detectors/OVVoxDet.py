@@ -105,19 +105,31 @@ class OVVoxDet(VoxDet):
             self._load_text_embeddings(text_emb_path)
     
     def _load_text_embeddings(self, path):
-        """Load pre-computed CLIP text embeddings from JSON file."""
-        if not path or not __import__('os').path.exists(path):
+        """Load pre-computed CLIP text embeddings from .pt or .json file."""
+        import os
+        if not path or not os.path.exists(path):
             return
-        with open(path, 'r') as f:
-            data = json.load(f)
-        
-        if isinstance(data, dict) and 'embeddings' in data:
-            emb = torch.tensor(data['embeddings'], dtype=torch.float32)
-        elif isinstance(data, list):
-            emb = torch.tensor(data, dtype=torch.float32)
+
+        if path.endswith('.pt') or path.endswith('.pth'):
+            emb = torch.load(path, map_location='cpu', weights_only=True)
+            if not isinstance(emb, torch.Tensor):
+                return
+            emb = emb.float()
         else:
-            return
-        
+            with open(path, 'r') as f:
+                data = json.load(f)
+
+            if isinstance(data, dict) and 'embeddings' in data:
+                emb = torch.tensor(data['embeddings'], dtype=torch.float32)
+            elif isinstance(data, dict):
+                # Dict with class names as keys, each value is a 512-dim list
+                emb = torch.tensor(list(data.values()), dtype=torch.float32)
+            elif isinstance(data, list):
+                emb = torch.tensor(data, dtype=torch.float32)
+            else:
+                return
+
+        print(f'[OVVoxDet] Loaded text embeddings: {emb.shape} from {path}')
         self.register_buffer('_text_embeddings', emb)
         self.text_classifier.set_text_embeddings(emb)
     
@@ -190,7 +202,7 @@ class OVVoxDet(VoxDet):
         # Stage 4: VoxDet supervised losses (detection head)
         # ============================================================
         losses = dict()
-        
+
         output = self.pts_bbox_head(
             voxel_feats=voxel_feats_enc,
             img_metas=img_metas,
@@ -198,7 +210,7 @@ class OVVoxDet(VoxDet):
             gt_occ=gt_occ,
             gt_offset=gt_offset,
         )
-        
+
         # Auxiliary head loss
         if hasattr(self, 'pts_bbox_head_aux'):
             if type(img_voxel_feats) is not list:
@@ -250,21 +262,42 @@ class OVVoxDet(VoxDet):
             aligned_vox_feat = self.distiller_3d(cls_feat)  # [B, 512, X, Y, Z]
             
             # 2D feature alignment (optional regularizer)
+            # Only run distiller_2d when LSeg 2D features have the right
+            # embedding dim — avoids re-running the heavy image encoder
+            # when features are placeholder data.
             aligned_2d_feat = None
             lseg_2d_feat = data_dict.get('lseg_2d_feat', None)
-            if lseg_2d_feat is not None:
-                # Use img_enc features from the image encoder
-                # Re-extract 2D features (already computed in extract_img_feat)
+            if isinstance(lseg_2d_feat, list):
+                lseg_2d_feat = lseg_2d_feat[0]
+            embed_dim = self.ov_config.get('embedding_dim', 512)
+            if (lseg_2d_feat is not None
+                    and lseg_2d_feat.dim() >= 3
+                    and lseg_2d_feat.shape[-3] == embed_dim):
+                # Reuse features already computed in extract_img_feat
                 img_enc_feats = self.image_encoder(img_inputs[0])  # [B, N, C, H, W]
-                B, N, C, H, W = img_enc_feats.shape
+                B_enc, N_enc, C_enc, H_enc, W_enc = img_enc_feats.shape
                 aligned_2d_feat = self.distiller_2d(
-                    img_enc_feats.view(B * N, C, H, W)
+                    img_enc_feats.view(B_enc * N_enc, C_enc, H_enc, W_enc)
                 )  # [B*N, 512, H, W]
+            else:
+                # Ensure distiller_2d params join the autograd graph so DDP
+                # doesn't error on unused parameters. Summing weights * 0
+                # is cheaper than a dummy forward (avoids BN issues).
+                _zero = sum(p.sum() for p in self.distiller_2d.parameters()) * 0.0
+                losses['_dummy_2d'] = _zero
             
-            # Get LSeg features from data pipeline
+            # Get LSeg features from data pipeline.
+            # Custom collate keeps variable-length tensors as lists — unpack
+            # the first element for batch_size=1.
             lseg_pixel_feat = data_dict.get('lseg_pixel_feat', None)
             lseg_confidence = data_dict.get('lseg_confidence', None)
             valid_vox_indices = data_dict.get('valid_vox_indices', None)
+            if isinstance(lseg_pixel_feat, list):
+                lseg_pixel_feat = lseg_pixel_feat[0]
+            if isinstance(lseg_confidence, list):
+                lseg_confidence = lseg_confidence[0]
+            if isinstance(valid_vox_indices, list):
+                valid_vox_indices = valid_vox_indices[0]
             
             # Text embeddings for L_vox_txt
             text_emb = getattr(self, '_text_embeddings', None)

@@ -162,7 +162,7 @@ class DepthNet(nn.Module):
                                       kernel_size=1,
                                       stride=1,
                                       padding=0)
-        
+
         self.bn = nn.BatchNorm1d(cam_channels)
         self.depth_mlp = Mlp(cam_channels, mid_channels, mid_channels)
         self.depth_se = SELayer(mid_channels)  # NOTE: add camera-aware
@@ -225,7 +225,7 @@ class ContextNet(nn.Module):
                                       kernel_size=1,
                                       stride=1,
                                       padding=0)
-        
+
         self.bn = nn.BatchNorm1d(cam_channels)
 
         self.context_mlp = Mlp(cam_channels, mid_channels, mid_channels)

@@ -291,29 +291,52 @@ class OVVoxDetLoss(nn.Module):
                 offset_field=None, gt_offsets=None, valid_mask=None):
         """
         Compute all OVO distillation losses.
-        
+
         Returns:
             loss_dict: dict of individual loss terms
         """
         loss_dict = {}
-        
+
+        B, C, X, Y, Z = aligned_vox_feat.shape
+
+        # Downsample gt_labels / gt_offsets / valid_mask to match feature resolution
+        # aligned_vox_feat is at FPN resolution (e.g. 128x128x16) while
+        # gt_labels is at full occ resolution (e.g. 256x256x32)
+        if gt_labels is not None and gt_labels.shape[-3:] != (X, Y, Z):
+            # Nearest-neighbor downsample for discrete labels
+            gt_labels = F.interpolate(
+                gt_labels.unsqueeze(1).float(), size=(X, Y, Z),
+                mode='nearest'
+            ).squeeze(1).long()
+        if gt_offsets is not None and gt_offsets.shape[-3:] != (X, Y, Z):
+            gt_offsets = F.interpolate(
+                gt_offsets.float(), size=(X, Y, Z),
+                mode='nearest'
+            )
+        if valid_mask is not None and valid_mask.shape[-3:] != (X, Y, Z):
+            valid_mask = F.interpolate(
+                valid_mask.unsqueeze(1).float(), size=(X, Y, Z),
+                mode='nearest'
+            ).squeeze(1).bool()
+
         # 1. Voxel-to-Pixel alignment
         if lseg_pixel_feat is not None and valid_vox_indices is not None:
-            B, C, X, Y, Z = aligned_vox_feat.shape
-            # Select valid voxel features
-            vox_flat = aligned_vox_feat.view(B, C, -1).permute(0, 2, 1)  # [B, N, 512]
-            
-            # For batch size 1 (common in SSC)
-            valid_vox_feat = vox_flat[0].index_select(0, valid_vox_indices)
-            
-            loss_vox_pix = self.vox_pix_loss(
-                valid_vox_feat.unsqueeze(0).permute(0, 2, 1),  # reshape for cosine sim
-                lseg_pixel_feat.unsqueeze(0).permute(0, 2, 1),
-                valid_vox_indices,
-                confidence_weights=confidence_weights,
-                offset_field=offset_field
-            )
-            loss_dict['loss_vox_pix'] = self.lambda_vox_pix * loss_vox_pix
+            # Check that LSeg features have matching embedding dim (skip placeholder data)
+            if lseg_pixel_feat.shape[-1] == C:
+                # Select valid voxel features
+                vox_flat = aligned_vox_feat.view(B, C, -1).permute(0, 2, 1)  # [B, N, 512]
+
+                # For batch size 1 (common in SSC)
+                valid_vox_feat = vox_flat[0].index_select(0, valid_vox_indices)
+
+                loss_vox_pix = self.vox_pix_loss(
+                    valid_vox_feat.unsqueeze(0).permute(0, 2, 1),  # reshape for cosine sim
+                    lseg_pixel_feat.unsqueeze(0).permute(0, 2, 1),
+                    valid_vox_indices,
+                    confidence_weights=confidence_weights,
+                    offset_field=offset_field
+                )
+                loss_dict['loss_vox_pix'] = self.lambda_vox_pix * loss_vox_pix
         
         # 2. Voxel-to-Text alignment
         if text_embeddings is not None and gt_labels is not None:
@@ -324,8 +347,10 @@ class OVVoxDetLoss(nn.Module):
         
         # 3. 2D alignment
         if aligned_2d_feat is not None and lseg_2d_feat is not None:
-            loss_2d = self.align_2d_loss(aligned_2d_feat, lseg_2d_feat)
-            loss_dict['loss_align_2d'] = self.lambda_2d * loss_2d
+            # Check that LSeg 2D features have matching embedding dim (skip placeholder data)
+            if lseg_2d_feat.dim() >= 2 and lseg_2d_feat.shape[-3] == aligned_2d_feat.shape[1]:
+                loss_2d = self.align_2d_loss(aligned_2d_feat, lseg_2d_feat)
+                loss_dict['loss_align_2d'] = self.lambda_2d * loss_2d
         
         # 4. Instance consistency
         if gt_offsets is not None and gt_labels is not None:
