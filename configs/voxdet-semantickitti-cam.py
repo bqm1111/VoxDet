@@ -201,7 +201,7 @@ _num_points_cross_ = 8
 _num_levels_ = 1
 _num_cams_ = 1
 _dim_ = 128
-
+# 
 model = dict(
     type="VoxDet",
     # The (a) part in Fig.3 of the main paper

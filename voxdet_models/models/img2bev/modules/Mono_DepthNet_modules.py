@@ -173,7 +173,6 @@ class DepthNet(nn.Module):
                                              1, 1)
         else:
             downsample = None
-        print("======> Depth channel = ", depth_channels)
         self.depth_conv = nn.Sequential(
             BasicBlock(mid_channels, depth_channels, downsample=downsample),
             BasicBlock(depth_channels, depth_channels),
@@ -195,8 +194,14 @@ class DepthNet(nn.Module):
                       padding=0),
         )
 
-    def forward(self, x, mlp_input):        
-        mlp_input = self.bn(mlp_input.reshape(-1, mlp_input.shape[-1]))
+    def forward(self, x, mlp_input):
+        mlp_input = mlp_input.reshape(-1, mlp_input.shape[-1])
+        if self.training and mlp_input.shape[0] == 1:
+            self.bn.eval()
+            mlp_input = self.bn(mlp_input)
+            self.bn.train()
+        else:
+            mlp_input = self.bn(mlp_input)
         x = self.reduce_conv(x)
         context_se = self.context_mlp(mlp_input)[..., None, None]
         context = self.context_se(x, context_se)
@@ -230,9 +235,15 @@ class ContextNet(nn.Module):
 
         self.context_mlp = Mlp(cam_channels, mid_channels, mid_channels)
         self.context_se = SELayer(mid_channels)  # NOTE: add camera-aware
-    
+
     def forward(self, x, mlp_input):
-        mlp_input = self.bn(mlp_input.reshape(-1, mlp_input.shape[-1]))
+        mlp_input = mlp_input.reshape(-1, mlp_input.shape[-1])
+        if self.training and mlp_input.shape[0] == 1:
+            self.bn.eval()
+            mlp_input = self.bn(mlp_input)
+            self.bn.train()
+        else:
+            mlp_input = self.bn(mlp_input)
         x = self.reduce_conv(x)
         context_se = self.context_mlp(mlp_input)[..., None, None]
         context = self.context_se(x, context_se)
