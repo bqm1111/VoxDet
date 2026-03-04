@@ -87,7 +87,7 @@ class OVVoxDet(VoxDet):
             embedding_dim=embed_dim,
             temperature=temperature,
         )
-        
+
         # --- Distillation loss ---
         self.ov_loss = OVVoxDetLoss(
             lambda_vox_pix=ov_config.get('lambda_vox_pix', 1.0),
@@ -103,7 +103,7 @@ class OVVoxDet(VoxDet):
         text_emb_path = ov_config.get('text_embedding_path', None)
         if text_emb_path is not None:
             self._load_text_embeddings(text_emb_path)
-    
+
     def _load_text_embeddings(self, path):
         """Load pre-computed CLIP text embeddings from .pt or .json file."""
         import os

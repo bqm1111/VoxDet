@@ -98,7 +98,8 @@ if __name__ == '__main__':
         monitor='val/mIoU',
         mode='max',
         save_last=True,
-        filename='best')
+        filename='best',
+        save_on_train_epoch_end=False)
     # Save periodically so mid-epoch progress is not lost
     periodic_checkpoint = ModelCheckpoint(
         dirpath=ckpt_dir,

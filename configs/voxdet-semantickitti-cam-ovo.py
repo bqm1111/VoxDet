@@ -186,7 +186,7 @@ testset_config = dict(
 
 data = dict(train=trainset_config, val=testset_config, test=testset_config)
 
-train_dataloader_config = dict(batch_size=4, num_workers=32)
+train_dataloader_config = dict(batch_size=2, num_workers=32)
 accumulate_grad_batches = 2  # effective batch_size = 2 * 2 = 4
 
 test_dataloader_config = dict(batch_size=1, num_workers=4)
