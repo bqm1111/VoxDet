@@ -144,10 +144,23 @@ def CE_ssc_loss(pred, target, class_weights=None, ignore_index=255):
     """
     :param: prediction: the predicted tensor, must be [BS, C, ...]
     """
+    n_classes = pred.shape[1]
+    t = target.long()
+    valid_mask = t != ignore_index
+    if valid_mask.any():
+        valid_vals = t[valid_mask]
+        bad = (valid_vals < 0) | (valid_vals >= n_classes)
+        if bad.any():
+            bad_vals = valid_vals[bad].unique().cpu().tolist()
+            raise ValueError(
+                f"CE_ssc_loss: target has values {bad_vals} outside "
+                f"[0, {n_classes}) (ignore_index={ignore_index}), "
+                f"pred shape={list(pred.shape)}, target shape={list(t.shape)}"
+            )
     criterion = nn.CrossEntropyLoss(
         weight=class_weights, ignore_index=ignore_index, reduction="mean"
     )
-    loss = criterion(pred, target.long())
+    loss = criterion(pred, t)
 
     return loss
 
@@ -159,24 +172,37 @@ import torch.nn.functional as F
 def CE_ssc_loss_balance(pred, target, class_weights=None, ignore_index=255):
     """
     逐类计算 CrossEntropyLoss 再平均。
-    
+
     参数:
-      pred          (Tensor): 预测，形状 [B, C, ...]  
-      target        (Tensor): 真实标签，形状 [B, ...]，每个值 in [0, C-1] 或 ==ignore_index  
-      class_weights (Tensor): 长度 C 的一维 Tensor，用于最终跨类加权（可选）  
+      pred          (Tensor): 预测，形状 [B, C, ...]
+      target        (Tensor): 真实标签，形状 [B, ...]，每个值 in [0, C-1] 或 ==ignore_index
+      class_weights (Tensor): 长度 C 的一维 Tensor，用于最终跨类加权（可选）
       ignore_index  (int):    在 target 中被忽略的标签值
-    
+
     返回:
       loss (Tensor): 标量，总损失
     """
+    n_classes = pred.shape[1]
+    t = target.long()
+    valid_mask = t != ignore_index
+    if valid_mask.any():
+        valid_vals = t[valid_mask]
+        bad = (valid_vals < 0) | (valid_vals >= n_classes)
+        if bad.any():
+            bad_vals = valid_vals[bad].unique().cpu().tolist()
+            raise ValueError(
+                f"CE_ssc_loss_balance: target has values {bad_vals} outside "
+                f"[0, {n_classes}) (ignore_index={ignore_index}), "
+                f"pred shape={list(pred.shape)}, target shape={list(t.shape)}"
+            )
     # 1) 先计算 per-pixel 的 CE loss, shape [B, ...]
-    
+
     #    如果提供了 class_weights，这里不传入 weight，后面再做跨类加权
     per_pixel_loss = F.cross_entropy(
-        pred, 
-        target.long(), 
-        weight=None, 
-        ignore_index=ignore_index, 
+        pred,
+        t,
+        weight=None,
+        ignore_index=ignore_index,
         reduction='none'
     )  # [B, H, W, ...] or [B, D1, D2, ...]
     

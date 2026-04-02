@@ -97,6 +97,8 @@ class VoxFormerHeadCrossAttention(nn.Module):
 
         lss_volume_flatten = lss_volume.flatten(2).squeeze(0).permute(1, 0)
         lss_volume_flatten = self.mlp_lss(lss_volume_flatten)
+        if self.training and torch.isnan(lss_volume_flatten).any():
+            raise ValueError(f"NaN in mlp_lss output: nan={torch.isnan(lss_volume_flatten).sum().item()}")
         volume_queries = lss_volume_flatten
 
         if proposal.sum() < 2:
@@ -106,7 +108,7 @@ class VoxFormerHeadCrossAttention(nn.Module):
         unmasked_idx = torch.nonzero(proposal.reshape(-1) > 0).view(-1)
         masked_idx = torch.nonzero(proposal.reshape(-1) == 0).view(-1)
         # Compute seed features of query proposals by deformable cross attention
-        
+
         seed_feats = self.cross_transformer.get_vox_features(
             mlvl_feats,
             volume_queries,
@@ -123,11 +125,17 @@ class VoxFormerHeadCrossAttention(nn.Module):
             cam_params=cam_params,
             **kwargs)
 
+        if self.training and torch.isnan(seed_feats[0]).any():
+            raise ValueError(f"NaN in cross_transformer seed_feats: shape={list(seed_feats[0].shape)}, nan={torch.isnan(seed_feats[0]).sum().item()}")
+
         vox_feats = torch.empty((self.volume_h, self.volume_w, self.volume_z, self.embed_dims), device=volume_queries.device)
         vox_feats_flatten = vox_feats.reshape(-1, self.embed_dims)
         vox_feats_flatten[vox_coords[unmasked_idx, 3], :] = seed_feats[0]
 
-        vox_feats_flatten[vox_coords[masked_idx, 3], :] = self.mlp_prior(lss_volume_flatten[masked_idx, :])
+        prior_feats = self.mlp_prior(lss_volume_flatten[masked_idx, :])
+        if self.training and torch.isnan(prior_feats).any():
+            raise ValueError(f"NaN in mlp_prior output: nan={torch.isnan(prior_feats).sum().item()}")
+        vox_feats_flatten[vox_coords[masked_idx, 3], :] = prior_feats
 
         vox_feats = vox_feats_flatten.reshape(self.volume_h, self.volume_w, self.volume_z, self.embed_dims)
         vox_feats = vox_feats.permute(3, 0, 1, 2).unsqueeze(0)

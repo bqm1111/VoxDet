@@ -8,7 +8,6 @@ from voxdet_core import build_model
 from .utils import get_inv_map
 from voxdet_core import load_checkpoint
 
-
 class pl_model(LightningBaseModel):
     def __init__(
         self,
@@ -145,7 +144,7 @@ class pl_model(LightningBaseModel):
 
         if gt_occ is not None:
             self.test_metrics.add_batch(pred, gt_occ)
-    
+    # 
     def on_test_epoch_end(self):
         metric_list = [("test", self.test_metrics)]
         print('---------------Val----------------')

@@ -123,7 +123,16 @@ class ASPP(nn.Module):
         x2 = self.aspp2(x)
         x3 = self.aspp3(x)
         x4 = self.aspp4(x)
-        x5 = self.global_avg_pool(x)
+        # global_avg_pool produces [N,C,1,1]; BN needs >1 value per channel
+        # when training. With N=1 (batch_size=1), temporarily use eval mode
+        # so BN uses learned running stats instead of batch stats.
+        gap_bn = self.global_avg_pool[2]  # BatchNorm inside the Sequential
+        if x.size(0) == 1 and self.training and isinstance(gap_bn, nn.BatchNorm2d):
+            gap_bn.eval()
+            x5 = self.global_avg_pool(x)
+            gap_bn.train()
+        else:
+            x5 = self.global_avg_pool(x)
         x5 = F.interpolate(x5,
                            size=x4.size()[2:],
                            mode='bilinear',

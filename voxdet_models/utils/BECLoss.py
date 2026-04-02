@@ -13,3 +13,4 @@ def BCE_ssc_loss(pred, target, class_weights, alpha):
     loss_valid_mean = torch.mean(loss_valid)
 
     return loss_valid_mean
+

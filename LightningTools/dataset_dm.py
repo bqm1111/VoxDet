@@ -95,7 +95,7 @@ class DataModule(pl.LightningDataModule):
             shuffle=True,
             pin_memory=True,
             persistent_workers=num_workers > 0,
-            prefetch_factor=4 if num_workers > 0 else None,
+            prefetch_factor=2 if num_workers > 0 else None,
             collate_fn=collate)
 
     def val_dataloader(self):

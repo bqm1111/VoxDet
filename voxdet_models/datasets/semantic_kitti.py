@@ -183,7 +183,7 @@ class SemanticKITTIDataset(Dataset):
         input_dict["gt_occ"] = self.get_ann_info(index, key="voxel_path")
 
         return input_dict
-
+    
     def load_annotations(self, ann_file=None):
         scans = []
         for sequence in self.sequences:

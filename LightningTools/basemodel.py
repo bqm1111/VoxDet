@@ -16,8 +16,7 @@ class LightningBaseModel(pl.LightningModule):
                 lr=self.config['optimizer']['lr'],
                 weight_decay=self.config['optimizer']['weight_decay']
             )
-
-        else:
+        else: 
             raise NotImplementedError
         
         if self.config['lr_scheduler']['type'] == 'OneCycleLR':
@@ -43,4 +42,4 @@ class LightningBaseModel(pl.LightningModule):
             'optimizer': optimizer,
             'lr_scheduler': scheduler,
         }
-    
+

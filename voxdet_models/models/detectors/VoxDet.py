@@ -117,16 +117,25 @@ class VoxDet(BaseModule):
 
     def extract_img_feat(self, img_inputs, img_metas):
         img_enc_feats = self.image_encoder(img_inputs[0]) # torch.Size([1, 1, 640, 48, 160])
+        if self.training and torch.isnan(img_enc_feats).any():
+            raise ValueError(f"NaN in image_encoder output: shape={list(img_enc_feats.shape)}, nan={torch.isnan(img_enc_feats).sum().item()}")
         B,N,C,H,W =img_inputs[0].size()
 
         mlp_input = self.depth_net.get_mlp_input(*img_inputs[1:7])
         context, depth = self.depth_net([img_enc_feats] + img_inputs[1:7] + [mlp_input], img_metas)
+        if self.training:
+            if torch.isnan(context).any():
+                raise ValueError(f"NaN in depth_net context: shape={list(context.shape)}, nan={torch.isnan(context).sum().item()}")
+            if torch.isnan(depth).any():
+                raise ValueError(f"NaN in depth_net depth: shape={list(depth.shape)}, nan={torch.isnan(depth).sum().item()}")
         #1, 1, 128, 48, 160
         if hasattr(self, 'img_view_transformer'):
             coarse_queries = self.img_view_transformer(context, depth, img_inputs[1:7]) # V_QA
         else:
             coarse_queries = None
-        
+        if self.training and coarse_queries is not None and torch.isnan(coarse_queries).any():
+            raise ValueError(f"NaN in img_view_transformer output: shape={list(coarse_queries.shape)}, nan={torch.isnan(coarse_queries).sum().item()}")
+
         proposal = self.proposal_layer(img_inputs[1:7], img_metas)
         # torch.Size([1, 1, 128, 128, 16])
         # torch.Size([1, 1, 128, 48, 160])
@@ -147,6 +156,8 @@ class VoxDet(BaseModule):
                     img_metas=img_metas,
                     mlvl_dpt_dists=[depth[i:i+1].unsqueeze(1)]
                 )
+                if self.training and torch.isnan(x).any():
+                    raise ValueError(f"NaN in VoxFormer_head output for batch item {i}: shape={list(x.shape)}, nan={torch.isnan(x).sum().item()}")
                 x_list.append(x)
             x = torch.cat(x_list, dim=0)
         else:
@@ -180,8 +191,16 @@ class VoxDet(BaseModule):
         gt_occ = data_dict['gt_occ']
 
         img_voxel_feats, depth, proposal = self.extract_img_feat(img_inputs, img_metas)
+        # --- NaN trace ---
+        if torch.isnan(img_voxel_feats).any():
+            raise ValueError(f"NaN after extract_img_feat: img_voxel_feats "
+                             f"shape={list(img_voxel_feats.shape)}, "
+                             f"nan_count={torch.isnan(img_voxel_feats).sum().item()}")
+        if torch.isnan(depth).any():
+            raise ValueError(f"NaN after extract_img_feat: depth")
+        # --- end NaN trace ---
         voxel_feats_enc = self.occ_encoder(img_voxel_feats)
-        
+
         # if len(voxel_feats_enc) > 1:
         #     voxel_feats_enc = [voxel_feats_enc[0]]
         if type(voxel_feats_enc) is tuple:
@@ -189,6 +208,17 @@ class VoxDet(BaseModule):
 
         if type(voxel_feats_enc) is not list:
             voxel_feats_enc = [voxel_feats_enc]
+        # --- NaN trace ---
+        def _check_nan(obj, prefix):
+            if isinstance(obj, torch.Tensor):
+                if torch.isnan(obj).any():
+                    raise ValueError(f"NaN at {prefix}: shape={list(obj.shape)}, "
+                                     f"nan_count={torch.isnan(obj).sum().item()}")
+            elif isinstance(obj, (list, tuple)):
+                for i, item in enumerate(obj):
+                    _check_nan(item, f"{prefix}[{i}]")
+        _check_nan(voxel_feats_enc, "occ_encoder output")
+        # --- end NaN trace ---
 
         with torch.no_grad():
             gt_occ_ = gt_occ.clone() 
@@ -242,6 +272,21 @@ class VoxDet(BaseModule):
             gt_occ=gt_occ,
             gt_offset=gt_offset,
         )
+
+        # --- DEBUG: validate gt_occ and model outputs before loss ---
+        n_classes = output['output_voxels'].shape[1]
+        valid_mask = gt_occ != 255
+        if valid_mask.any():
+            valid_vals = gt_occ[valid_mask]
+            bad = (valid_vals < 0) | (valid_vals >= n_classes)
+            if bad.any():
+                bad_vals = valid_vals[bad].unique().cpu().tolist()
+                raise ValueError(
+                    f"forward_train: gt_occ has values {bad_vals} outside "
+                    f"[0, {n_classes}) (ignore=255)")
+        if torch.isnan(output['output_voxels']).any():
+            raise ValueError("forward_train: NaN detected in main head output_voxels")
+        # --- END DEBUG ---
 
         losses = dict()
         if hasattr(self, 'pts_bbox_head_aux'):

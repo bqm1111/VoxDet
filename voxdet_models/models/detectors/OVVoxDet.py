@@ -145,6 +145,27 @@ class OVVoxDet(VoxDet):
         img_inputs = data_dict['img_inputs']
         img_metas = data_dict['img_metas']
         gt_occ = data_dict['gt_occ']
+
+        # Guard against rare shared-memory corruption from dataloader workers.
+        _gt_min, _gt_max = gt_occ.min().item(), gt_occ.max().item()
+        if _gt_min < 0 or _gt_max > 255:
+            import warnings
+            warnings.warn(
+                f"[OVVoxDet] Skipping corrupted batch: gt_occ range "
+                f"[{_gt_min}, {_gt_max}], expected [0, 255]"
+            )
+            # Return dummy zero losses so the training step can continue
+            dummy_pred = torch.zeros(
+                gt_occ.shape[0], self.pts_bbox_head.num_classes,
+                *gt_occ.shape[1:], device=gt_occ.device
+            )
+            return {
+                'losses': {k: torch.tensor(0.0, device=gt_occ.device, requires_grad=True)
+                           for k in ['loss_voxel_ce', 'loss_voxel_sem_scal',
+                                     'loss_voxel_geo_scal', 'loss_voxel_ctr']},
+                'pred': dummy_pred.argmax(dim=1),
+                'gt_occ': gt_occ.clamp(0, 19),
+            }
         
         # ============================================================
         # Stage 1: VoxDet feature extraction (identical to parent)

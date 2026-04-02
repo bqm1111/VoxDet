@@ -114,7 +114,7 @@ class LoadMultiViewImageFromFiles_SemanticKitti(object):
         img = img.rotate(rotate)
         
         return img
-    
+
     def get_inputs(self, results, flip=None, scale=None):
         img_filenames = results['img_filename']
 

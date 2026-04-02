@@ -258,3 +258,4 @@ class KITTI360Dataset(Dataset):
         P2 = infos['P2']
         baseline = P3[0,3]/(-P3[0,0]) - P2[0,3]/(-P2[0,0])
         return baseline
+
